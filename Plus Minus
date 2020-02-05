@@ -1,0 +1,32 @@
+// Plus Minus.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+#include <vector>
+#include <string>
+#include <iostream>
+using namespace std;
+
+
+int main()
+{
+	int n;
+	cin >> n;
+	std::vector<int> arr(n);
+
+	double nPositive(0), nNegative(0), nZero(0);
+	double sum(0);
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> arr[i];
+		if (arr[i] > 0)
+			nPositive++;
+		else if (arr[i] < 0)
+			nNegative++;
+		else
+			nZero++;
+	}
+	sum = nPositive + nNegative + nZero;
+	cout << fixed << nPositive / sum << endl;
+	cout << fixed << nNegative / sum << endl;
+	cout << fixed << nZero / sum << endl;
+
+}
