@@ -1,0 +1,25 @@
+// Birthday Cake Candles.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+
+int main()
+{
+	int n;
+	std::cin >> n;
+	int *arr = new int[n+1];
+	int max(0);
+	int count(0);
+	for (int i = 0; i < n; ++i)
+	{
+		std::cin >> arr[i];
+		if (max < arr[i])
+		{
+			max = arr[i];
+			count = 0;
+		}
+		if (max == arr[i])
+			count++;
+	}
+	std::cout << count << std::endl;
+}
