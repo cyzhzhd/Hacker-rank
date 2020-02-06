@@ -1,0 +1,84 @@
+Find length of an array in c++ in 5 differnt ways       (source: https://www.techiedelight.com/find-length-of-an-array-cpp/)
+
+
+1. Template argument deduction
+
+#include <iostream>
+
+template <class T, std::size_t N>
+constexpr std::size_t size(const T (&array)[N]) noexcept
+{
+	return N;
+}
+
+int main()
+{
+	int arr[] = { 1, 2, 3, 4, 5 };
+	std::cout << "The length of the array is " << size(arr);
+
+	return 0;
+}
+
+
+
+2. Using pointer arithmetic
+
+#include <iostream>
+#include <iterator>
+
+int main()
+{
+	int arr[] = { 1, 2, 3, 4, 5 };
+
+	int n = std::end(arr) - std::begin(arr);
+	std::cout << "The length of the array is " << n;
+
+	return 0;
+}
+
+
+
+3. C++11 - std::distance
+
+#include <iostream>
+#include <iterator>
+
+int main()
+{
+	int arr[] = { 1, 2, 3, 4, 5 };
+
+	int n = std::distance(std::begin(arr), std::end(arr));
+	std::cout << "The length of the array is " << n;
+
+	return 0;
+}
+
+
+
+4. C++17 - std::size()
+#include <iostream>
+#include <iterator>
+
+int main()
+{
+	int arr[] = { 1, 2, 3, 4, 5 };
+
+	std::cout << "The length of the array is " << std::size(arr);
+
+	return 0;
+}
+
+
+
+5. Using boost c++ library
+
+#include <iostream>
+#include <boost/range.hpp>
+
+int main()
+{
+	int arr[] = { 1, 2, 3, 4, 5 };
+	std::cout << "The length of the array is " << boost::size(arr);
+
+	return 0;
+}
