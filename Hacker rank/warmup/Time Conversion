@@ -1,0 +1,50 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <iomanip>
+
+std::vector<std::string> split(std::string str, std::string token) {
+    std::vector<std::string>result;
+    while (str.size()) {
+        int index = str.find(token);
+        if (index != std::string::npos) {
+            result.push_back(str.substr(0, index));
+            str = str.substr(index + token.size());
+            if (str.size() == 0)result.push_back(str);
+        }
+        else {
+            result.push_back(str);
+            str = "";
+        }
+    }
+    return result;
+}
+
+int main()
+{
+	std::string str;
+	std::cin >> str;
+    std::string am;
+    std::vector<std::string> splits;
+    
+    splits = split(str, ":");
+    splits[0] = std::to_string(stoi(splits[0]) % 12);
+    
+    am = splits[splits.size() - 1];
+    splits[splits.size() - 1] = am.substr(0, 2);
+    am = am.substr(2, 4);
+    
+    if (am == "PM")
+    {
+        splits[0] = std::to_string((stoi(splits[0]) + 12));
+    }
+
+    for (int i = 0; i < splits.size(); ++i)
+    {
+        std::cout.precision(2);
+        if (i < splits.size() - 1)          
+            std::cout << std::setw(2) << std::setfill('0') << splits[i] << ":";
+        else
+            std::cout << splits[i] << std::endl;
+    }
+}
