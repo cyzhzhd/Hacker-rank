@@ -1,3 +1,5 @@
+<File: ArrayList.h>
+
 #pragma once
 
 #define list_len 100
@@ -20,3 +22,115 @@ private:
 	int curPosition;
 };
 
+
+
+
+
+
+
+
+
+
+<File: ArrayList.cpp>
+
+#include <iterator>
+#include <iostream>
+#include "ArrayList.h"
+
+ArrayList::ArrayList() : curPosition(-1), data(0), numOfData(0)
+{
+    //for (int i = 0; i < std::size(arr); ++i)
+    //    arr[i] = 0;
+}
+
+void ArrayList::LInsert(int data)
+{
+    if (numOfData > list_len)
+    {
+        std::cout << "저장이 불가능합니다." << std::endl;
+        return;
+    }
+
+    arr[numOfData] = data;
+    numOfData++;
+}
+
+int ArrayList::LFirst(int *data)
+{
+    if (numOfData == 0)
+        return 0;
+    
+    *data = arr[0];
+    curPosition = 0;
+    return 1;
+}
+
+int ArrayList::LNext(int* data)
+{
+    if (curPosition >= numOfData - 1)
+        return 0;
+
+    curPosition++;
+    *data = arr[curPosition];
+    return 1;
+}
+
+void ArrayList::LRemove(int pos)
+{
+    for (int i = pos; i < numOfData - 1; ++i)
+    {
+        arr[i] = arr[i + 1];
+    }
+    numOfData--;
+    curPosition--;
+}
+
+int ArrayList::LCount()
+{ 
+    return numOfData;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+<File: list.cpp> 
+// list.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+#include "ArrayList.h"
+
+int main()
+{
+	ArrayList list;
+	int data(0);
+	list.LInsert(23);
+	list.LInsert(3);
+	list.LInsert(12);
+	list.LInsert(27);
+	if (list.LFirst(&data))
+		std::cout << data << std::endl;
+	while(list.LNext(&data))
+		std::cout << data << std::endl;
+	std::cout << list.LCount() << std::endl;
+
+	std::cout << "--------------" << std::endl;
+	list.LRemove(2);
+	if (list.LFirst(&data))
+		std::cout << data << std::endl;
+	while (list.LNext(&data))
+		std::cout << data << std::endl;
+	std::cout << list.LCount() << std::endl;
+}
+
+
+reference
+Sequential List Implementation in C++ https://gist.github.com/krishnr/3cd24fce95bff9841a97
