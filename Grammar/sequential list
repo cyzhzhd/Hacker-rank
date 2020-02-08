@@ -1,3 +1,5 @@
+downside: Should define length of an array.
+
 <File: ArrayList.h>
 
 #pragma once
