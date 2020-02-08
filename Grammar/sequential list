@@ -1,0 +1,22 @@
+#pragma once
+
+#define list_len 100
+ 
+
+class ArrayList
+{
+public:
+	ArrayList();
+	void LInsert(int data);
+	int LFirst(int* data);
+	int LNext(int* data);
+	void LRemove(int pos);
+	int LCount();
+
+private:
+	int arr[list_len];
+	int data; 
+	int numOfData;
+	int curPosition;
+};
+
