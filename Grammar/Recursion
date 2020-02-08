@@ -1,0 +1,27 @@
+// HanoiTower.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+using namespace std;
+void HanoiTower(int n, char from, char by, char to, int count)
+{
+	if (n == 1)
+	{
+		count++;
+		cout << "원반" << n << "을 " << from << "에서 " << to << "로 이동 count = " << count << endl;
+	}
+	else
+	{
+		count++;
+		HanoiTower(n - 1, from, to, by, count);
+		cout << "원반" << n << "을 " << from << "에서 " << to << "로 이동 count = " << count << endl;
+		HanoiTower(n - 1, by, from, to, count);
+	}
+}
+
+int main()
+{
+	char from('A'), by('B'), to('C');
+	HanoiTower(5, from, by, to, 0);
+}
+
