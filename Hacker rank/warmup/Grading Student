@@ -1,0 +1,22 @@
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	int n;
+	std::cin >> n;
+	std::vector<int> arr(n);
+	for (int i = 0; i < n; ++i)
+	{
+		std::cin >> arr[i];
+		if (arr[i] >= 38)
+		{
+			if (arr[i] % 5 >= 3)
+				arr[i] += (5 - arr[i] % 5);
+		}
+	}
+	for (int n : arr)
+	{
+		std::cout << n << std::endl;
+	}
+}
