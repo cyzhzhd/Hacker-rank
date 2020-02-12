@@ -1,0 +1,134 @@
+<file: DoublyLinkedList.h>
+
+#pragma once
+#include <iostream>
+
+typedef int Data;
+
+class Node
+{
+public:
+	Data data;
+	Node* next;
+	Node* prev;
+	Node() : next(nullptr), prev(nullptr), data(NULL)  {}
+};
+
+class DoublyLinkedList
+{
+public:
+	DoublyLinkedList();
+	void LInsert(Data data);
+	int LFirst(Data* pData);
+	int LNext(Data* pData);
+	Data LRemove();
+	int LCount();
+protected:
+	Node* head;
+	Node* tail;
+	Node* cur;
+	int numOfData;
+};
+
+
+
+
+
+
+<file: DoublyLinkedList.cpp>
+
+#include "DoublyLinkedList.h"
+
+DoublyLinkedList::DoublyLinkedList() : cur(nullptr), numOfData(0)
+{
+	head = new Node;
+	tail = new Node;
+	head->next = tail;
+	tail->prev = head;
+}
+
+void DoublyLinkedList::LInsert(Data data)
+{
+	Node * newNode = new Node;
+	newNode->data = data;
+
+	tail->prev->next = newNode;
+	newNode->prev = tail->prev;
+	newNode->next = tail;
+	tail->prev = newNode;
+
+	numOfData++;
+}
+
+int DoublyLinkedList::LFirst(Data* pData)
+{
+	if (head->next == tail)
+		return 0;
+	cur = head->next;
+	*pData = cur->data;
+	return 1;
+}
+
+int DoublyLinkedList::LNext(Data* pData)
+{
+	if (cur->next == tail)
+		return 0;
+	cur = cur->next;
+	*pData = cur->data;
+	return 1;
+}
+
+Data DoublyLinkedList::LRemove()
+{
+	Node * rNode = cur;
+	Data rData = rNode->data;
+
+	cur->prev->next = cur->next;
+	cur->next->prev = cur->prev;
+
+	cur = cur->prev;
+
+	delete rNode;
+	numOfData--;
+	return rData;
+}
+
+int DoublyLinkedList::LCount()
+{
+	return numOfData;
+}
+
+
+
+
+
+
+<file: Imple.cpp>
+#include "DoublyLinkedList.h"
+#include <iostream>
+
+int main()
+{
+	DoublyLinkedList list;
+	Data data;
+	list.LInsert(3);
+	list.LInsert(5);
+	list.LInsert(7);
+	if (list.LFirst(&data))
+	{
+		std::cout << data << std::endl;
+		while (list.LNext(&data))
+			std::cout << data << std::endl;
+	}
+
+	std::cout << "Remove" << std::endl;
+	Data d = list.LRemove();
+
+	std::cout << "search" << std::endl;
+	if (list.LFirst(&data))
+	{
+		std::cout << data << std::endl;
+		while (list.LNext(&data))
+			std::cout << data << std::endl;
+	}
+}
