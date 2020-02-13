@@ -1,0 +1,85 @@
+https://www.hackerrank.com/challenges/magic-square-forming/problem
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+
+void MagicSquare(std::vector<int> list)
+{
+	int matrix[3][3];
+	int count(0);
+	bool isMagicSquare = true;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			matrix[i][j] = list[count];
+			count++;
+		}
+	} 
+	for (int i = 0; i < 3; ++i)
+	{
+		int v = 0;
+		int h = 0;
+		for (int j = 0; j < 3; ++j)
+		{
+			v += matrix[i][j];
+			h += matrix[j][i];
+		}
+		if (v != 15 || h != 15)
+			isMagicSquare = false;
+	}
+	int diag1 = matrix[0][0] + matrix[1][1] + matrix[2][2];
+	int diag2 = matrix[2][0] + matrix[1][1] + matrix[0][2];
+	if (diag1 != 15 || diag2 != 15)
+		isMagicSquare = false;
+
+	if (isMagicSquare)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				std::cout << matrix[i][j] << ", ";
+			}
+		}
+		std::cout << std::endl;
+	}
+}
+
+void FormMagicSquare()
+{
+	std::vector<int> list = { 1,2,3,4,5,6,7,8,9 };
+
+	do
+	{
+		MagicSquare(list);
+	} while (std::next_permutation(list.begin(), list.end()));
+}
+
+int main()
+{
+	//FormMagicSquare();
+	int magicSquares[8][9] =
+	{
+		{2, 7, 6, 9, 5, 1, 4, 3, 8},
+		{2, 9, 4, 7, 5, 3, 6, 1, 8},
+		{4, 3, 8, 9, 5, 1, 2, 7, 6},
+		{4, 9, 2, 3, 5, 7, 8, 1, 6},
+		{6, 1, 8, 7, 5, 3, 2, 9, 4},
+		{6, 7, 2, 1, 5, 9, 8, 3, 4},
+		{8, 1, 6, 3, 5, 7, 4, 9, 2},
+		{8, 3, 4, 1, 5, 9, 6, 7, 2},
+	};
+
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < 9; ++j)
+		{
+			std::cout << magicSquares[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+}
