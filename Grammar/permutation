@@ -1,0 +1,62 @@
+1. Get permutations using recursive method.
+
+#include <iostream>
+
+void SwapArray(int * arr, int a, int b)
+{
+	int temp = arr[a];
+	arr[a] = arr[b];
+	arr[b] = temp;
+}
+
+void Permutation(int * arr, int i, int n)
+{
+	int j;
+	if (i == n - 1)
+	{
+		for (int k = 0; k < n; ++k)
+		{
+			std::cout << arr[k] << " ";
+		}
+		std::cout << std::endl;
+	}
+	else
+	{
+		for (int j = i; j < n; ++j)
+		{
+			SwapArray(arr, i, j);
+			Permutation(arr, i + 1, n);
+			SwapArray(arr, j, i);
+		}
+
+	}
+}
+
+int main()
+{
+	int arr[] = { 1,2,3,4,5 };
+	Permutation(arr, 0, 5);
+}
+
+
+2. Get Permutations using STL
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main()
+{
+	std::vector<int> list = { 1,2,3 };
+	list.push_back(4);
+	list.push_back(5);
+
+	do {
+
+		for (int i = 0; i < list.size(); i++) {
+			std::cout << list[i] << " ";
+		}
+
+		std::cout << std::endl;
+
+	} while (std::next_permutation(list.begin(), list.end()));
+}
