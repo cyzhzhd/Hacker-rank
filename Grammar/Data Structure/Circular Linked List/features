@@ -1,0 +1,5 @@
+tail is needed to add node in the tail. On the other hand, there is no advantage if we use both head and tail. Thus, we will use tail only.
+
+No dummies in this implemntation.
+Dummies can simplify Remove() but make Next() more complciated.
+
