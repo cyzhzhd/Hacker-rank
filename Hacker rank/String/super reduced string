@@ -1,0 +1,32 @@
+https://www.hackerrank.com/challenges/reduced-string/problem
+
+
+#include <iostream>
+#include <string>
+
+int main()
+{
+	std::string str;
+	std::cin >> str;
+	int length = str.length() - 1;
+	for (int i = 0; i < length; ++i)
+	{
+		if (i <= 0)
+			i = 0;
+		if (str[i] == str[i + 1])
+		{
+			str.erase(i, 2);
+			i = i - 2;
+		}
+		if (str.length() == 0)
+		{
+			std::cout << "Empty String" << std::endl;
+			break;
+		}
+			
+	}
+	if (str.length() != 0)
+	{
+		std::cout << str << std::endl;
+	}
+}
