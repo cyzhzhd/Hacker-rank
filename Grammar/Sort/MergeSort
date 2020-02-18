@@ -1,0 +1,57 @@
+#include <iostream>
+#include <algorithm>
+
+void MergeTwoArea(int arr[], int left, int mid, int right)
+{
+    int lIdx(left), rIdx(mid + 1);
+    int* sortArr = new int[right+1];
+    int sIdx(left);
+
+    while (lIdx <= mid && rIdx <= right)
+    {
+        if (arr[lIdx] < arr[rIdx])
+            sortArr[sIdx++] = arr[lIdx++];
+        else
+            sortArr[sIdx++] = arr[rIdx++];
+    }
+
+    if (lIdx > mid)
+    {
+        for (int i = rIdx; i <= right; ++i, ++sIdx)
+            sortArr[sIdx] = arr[i];
+    }
+    else
+    {
+        for (int i = lIdx; i <= mid; ++i, ++sIdx)
+            sortArr[sIdx] = arr[i];
+    }
+
+    for (int i = left; i <= right; ++i)
+        arr[i] = sortArr[i];
+
+    delete[] sortArr;
+}
+
+void MergeSort(int arr[], int left, int right)
+{
+    if (left < right)
+    {
+        int mid = (left + right) / 2 ;
+
+        MergeSort(arr, left, mid);
+        MergeSort(arr, mid + 1, right);
+
+        MergeTwoArea(arr, left, mid, right);
+    }
+
+}
+int main()
+{
+    int arr[11]{ 3, 2, 4, 1, 7, 6, 5, 3, 2, 6, 1 };
+    
+    MergeSort(arr, 0, std::size(arr)-1);
+
+    for (int i : arr)
+        std::cout << i << " ";
+    std::cout << std::endl;
+}
