@@ -7,9 +7,27 @@ void Swap(int arr[], int idx1, int idx2)
     arr[idx2] = temp;
 }
 
+int Median(int arr[], int left, int right)
+{
+    int temp[3] = { left, (left + right) / 2, right };
+    if (arr[temp[0]] > arr[temp[1]])
+        Swap(temp, 0, 1);
+    if (arr[temp[1]] > arr[temp[2]])
+        Swap(temp, 1, 2);
+    if (arr[temp[0]] > arr[temp[1]])
+        Swap(temp, 0, 1);
+
+    return temp[1];
+}
+
+
 int Partition(int arr[], int left, int right)
 {
-    int pivot(arr[left]), low(left + 1), high(right);
+    int pIdx = Median(arr, left, right);
+    int pivot = arr[pIdx];
+    Swap(arr, pIdx, left);
+
+    int low(left + 1), high(right);
     while (low <= high)
     {
         while (pivot >= arr[low] && low <= right)
@@ -37,7 +55,7 @@ void QuickSort(int arr[], int left, int right)
 
 int main()
 {
-    int arr[7]{ 3, 3, 4, 1, 7, 6, 5 };
+    int arr[20]{ 19, 11, 18, 3, 2, 16, 4, 1, 15, 10, 7, 14, 17, 6, 5, 13, 9, 8, 20, 12 };
     int len = sizeof(arr) / sizeof(int);
     QuickSort(arr, 0, len - 1);
 
