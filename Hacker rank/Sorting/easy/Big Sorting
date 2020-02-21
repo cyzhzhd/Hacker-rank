@@ -1,0 +1,23 @@
+https://www.hackerrank.com/challenges/big-sorting/problem
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+bool pred(std::string i, std::string j)
+{
+    return i.length() == j.length() ? i < j : i.length() < j.length();
+}
+
+int main()
+{
+    int n;
+    std::cin >> n;
+    std::vector<std::string> vec(n);
+    for (auto& element : vec)    std::cin >> element;
+
+    std::sort(vec.begin(), vec.end(), pred);
+
+    for (auto n : vec) std::cout << n << std::endl;
+}
