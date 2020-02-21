@@ -1,20 +1,19 @@
+https://www.hackerrank.com/challenges/sherlock-and-valid-string/problem
+
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <vector>
 
-int main()
+template <typename T>
+std::vector<int> CountEachElements(T object, int length)
 {
-	std::string str;
-	std::cin >> str;
-	str += "{"; // for a last alphabet
-	std::sort(str.begin(), str.end());
-
+	std::sort(object.begin(), object.end());
 	std::vector<int> counts;
 	int count(1);
-	for (int i = 0; i < str.length() - 1; ++i)
+	for (int i = 0; i < length - 1; ++i)
 	{
-		if (str[i] == str[i + 1])
+		if (object[i] == object[i + 1])
 		{
 			count++;
 		}
@@ -24,48 +23,33 @@ int main()
 			count = 1;
 		}
 	}
+	return counts;
+}
+
+int main()
+{
+	std::string str;
+	std::cin >> str;
+
+	str += "{"; // to count a number of each characters
+	std::vector<int> counts = CountEachElements(str, str.length());
+
+	counts.push_back(999); // to count a number of each counts
+	std::vector<int> counts2 = CountEachElements(counts, counts.size());
 
 
-
-	counts.push_back(999); 
 	std::sort(counts.begin(), counts.end());
-	std::vector<int> counts2;
-	int count2(1);
-	for (int i = 0; i < counts.size() - 1; ++i)
-	{
-		if (counts[i] == counts[i + 1])
-		{
-			count2++;
-		}
-		else
-		{
-			counts2.push_back(count2);
-			count2 = 1;
-		}
-	}
-	std::cout << "counts" << std::endl;
-	for (int i : counts)
-		std::cout << i << " ";
-	std::cout << std::endl;
-	std::cout << "counts2" << std::endl;
-	for (int i : counts2)
-		std::cout << i << " ";
-	std::cout << std::endl;
-
-
-
 	auto unique = std::unique(counts.begin(), counts.end());
 	counts.erase(unique, counts.end());
+
+	bool isCharacterSingle = (counts[0] == 1 && counts2[0] == 1);
+	bool removable = (abs(counts[0] - counts[1]) == 1 && (counts2[0] == 1 || counts2[1] == 1));
 	if (counts2.size() > 2)
 		std::cout << "NO" << std::endl;
 	else if (counts2.size() == 2)
 	{
-		if ((counts2[0] == 1 || counts2[1] == 1) && ((counts[0] == 1 || counts[1] == 1) || abs(counts[0] - counts[1]) == 1 || (counts[0] == counts2[0] && counts[2] > 1)))
-		{
-			if(counts[2] > 1)
+		if (isCharacterSingle || removable)
 			std::cout << "YES" << std::endl;
-
-		}
 		else
 			std::cout << "NO" << std::endl;
 	}
@@ -73,47 +57,4 @@ int main()
 	{
 		std::cout << "YES" << std::endl;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-	//if (counts.size() > 2)
-	//	std::cout << "NO" << std::endl;
-	//else
-	//{
-	//	if (counts[0] == counts[1] || abs(counts[0] - counts[1]) == 1 || counts.size() == 1)
-	//		std::cout << "YES" << std::endl;
-	//	else
-	//		std::cout << "NO" << std::endl;
-	//}
-
-	//std::sort(counts.begin(), counts.end());
-	//bool chance(true);
-	//bool answer(true);
-	//int count2(1);
-	//for (int i = 0; i < counts.size() - 1; ++i)
-	//{
-	//	if (counts[i] == counts[i + 1]) {}
-	//	else
-	//	{
-	//		if (abs(counts[i] - counts[i + 1]) == 1 && chance)
-	//		{
-	//			chance = false;
-	//		}
-	//		else
-	//			answer = false;
-	//	}
-	//}
-	//if (answer && (counts[0] )
-	//	std::cout << "YES" << std::endl;
-	//else
-	//	std::cout << "NO" << std::endl;
 }
