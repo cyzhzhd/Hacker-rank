@@ -1,0 +1,140 @@
+https://www.acmicpc.net/problem/1780
+
+--------------
+
+#include <iostream>
+#include <vector>
+
+int negative(0);
+int zero(0);
+int positive(0);
+
+void Count(std::vector<int> set)
+{
+	bool isSame(true);
+	set.push_back(set[0]);
+	for (int i = 0; i < set.size(); ++i)
+	{
+		if (set[i] != set[i + 1]) isSame = false;
+
+		if (set[i] == -1) negative++;
+		else if (set[i] == 0) zero++;
+		else if (set[i] == 1) positive++;
+	}
+	if (isSame)
+	{
+		if (set[0] == -1) negative -= (set.size()-1);
+		else if (set[0] == 0) zero -= (set.size() - 1);
+		else if (set[0] == 1) positive -= (set.size() - 1);
+	}
+}
+
+int DivideIntoNine(int** arr, int startI, int startJ, int n)
+{
+	if (n==1)	return arr[startI][startJ];
+	
+	std::vector<int> set;
+	for (int i = startI; i < n; i += (n/3))
+	{
+		for (int j = startJ; j < n; j += (n / 3))
+		{
+			set.push_back(DivideIntoNine(arr, i, j, n / 3));
+		}
+	}
+	Count(set);
+	return 1;
+}
+
+int main()
+{
+	int n(0);
+	std::cin >> n;
+	int** paper = new int* [n];
+	for (int i = 0; i < n; ++i)
+	{
+		paper[i] = new int[n];
+	}
+
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			std::cin >> paper[i][j];
+		}
+	}
+
+	std::cout << "---------------" << std::endl;
+
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			std::cout << paper[i][j] << ' ';
+		}
+		std::cout << std::endl;
+	}
+
+	DivideIntoNine(paper, 0, 0, n);
+	std::cout << negative << std::endl;
+	std::cout << zero << std::endl;
+	std::cout << positive << std::endl;
+}
+
+
+
+
+------------------------------
+
+	
+#include <iostream>
+#include <cstring>
+ 
+using namespace std;
+int N;
+int map[2200][2200];
+int ans[3];
+ 
+bool check(int r, int c, int num) {
+    int test = map[r][c];
+    for(int i = r; i < r + num; i ++) {
+        for(int j = c; j < c + num; j ++) {
+            if(test != map[i][j])
+                return false;
+        }
+    }
+    return true;
+}
+ 
+int divide(int r, int c, int num) {
+    if(check(r, c, num)) {
+        ans[map[r][c]] += 1;
+    } else {
+        int newsize = num / 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                divide(r + newsize*i, c + newsize*j, newsize);
+            }
+        }
+    }
+    return 0;
+}
+ 
+int main() {
+    cin >> N;
+    memset(ans, 0, sizeof(ans));
+    for(int i = 0; i < N; i ++) {
+        for(int j = 0; j < N; j ++) {
+            int num;
+            cin >> num;
+            num ++;
+            map[i][j] = num;
+        }
+    }
+ 
+    divide(0, 0, N);
+ 
+    cout << ans[0] << endl;
+    cout << ans[1] << endl;
+    cout << ans[2] << endl;
+    return 0;
+}
