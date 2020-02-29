@@ -1,0 +1,51 @@
+https://www.acmicpc.net/problem/1992
+
+#include <iostream>
+#include <string>
+
+std::string QuadTree(std::string str1, std::string str2, std::string str3, std::string str4)
+{
+	std::string quadTree;
+	// size of str shoudl be 1, counter ex) n = 4, 0101 0101 0101 0101
+	if (str1 == str2 && str2 == str3 && str3 == str4 && str1.size() == 1) 
+		quadTree = str1;
+	else
+		quadTree = "(" + str1 + str2 + str3 + str4 + ")";
+	return quadTree;
+}
+
+std::string Quadrisect(int ** arr, int startI, int endI, int startJ, int endJ)
+{
+	if (startI == endI && startJ == endJ)
+		return std::to_string(arr[startI][startJ]);
+	
+	int midI = (startI + endI) / 2;
+	int midJ = (startJ + endJ) / 2;
+	std::string str1 = Quadrisect(arr, startI, midI, startJ, midJ); // quadrant 1
+	std::string str2 = Quadrisect(arr, startI, midI, midJ + 1, endJ); // quadrant 2
+	std::string str3 = Quadrisect(arr, midI+1, endI, startJ, midJ); // quadrant 3
+	std::string str4 = Quadrisect(arr, midI + 1, endI, midJ + 1, endJ); // quadrant 4
+	return QuadTree(str1, str2, str3, str4);
+}
+
+int main()
+{
+	int n(0); // size of the square;
+	std::cin >> n;
+	int ** square = new int* [n];
+	for (int i = 0; i < n; ++i)
+		square[i] = new int[n];
+	
+	for (int i = 0; i < n; ++i)
+	{
+		std::string input;
+		std::cin >> input;
+		for (int j = 0; j < n; ++j)
+		{
+			square[i][j] = input[j] - '0';
+		}
+	}
+	std::cout << Quadrisect(square, 0, n - 1, 0, n - 1) << std::endl;
+
+	delete[] square;
+}
