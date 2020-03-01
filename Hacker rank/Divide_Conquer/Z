@@ -1,0 +1,67 @@
+https://www.acmicpc.net/problem/1074
+
+#include <math.h>
+#include <iostream>
+
+bool isSearching(true);
+unsigned long int count(0);
+
+void MovePointer(unsigned long int row, unsigned long int col, int size, unsigned long int target, int r, int c)
+{
+	for (unsigned long int i = row; i < row + size; ++i)
+	{
+		if (isSearching) // after the break, stop processing the code
+		{
+			for (unsigned long int j = col; j < col + size; ++j)
+			{
+				if (r == i && c == j)
+				{
+					isSearching = false;
+					break;
+				}
+				else count++;
+			}
+		}
+	}
+}
+
+void DivideUntil2by2(unsigned long int row, unsigned long int col, unsigned long int size, unsigned long int target, int r, int c)
+{
+	if (size <= 2 && isSearching)    
+		MovePointer(row, col, size, target, r, c);
+	else if(size != 2 && isSearching)
+	{
+		size /= 2;
+		if (r - row < size && c - col < size) // left top
+			DivideUntil2by2(row, col, size, target, r, c);
+		else if (r - row < size && c - col >= size) // right top
+		{
+			count += size * size;
+			DivideUntil2by2(row, col + size, size, target, r, c);
+		}
+		else if (r - row >= size && c - col < size) // left bottom
+		{
+			count += size * size * 2;
+			DivideUntil2by2(row + size, col, size, target, r, c);
+		}
+		else if (r - row >= size && c - col >= size) // right bottom
+		{
+			count += size * size * 3;
+			DivideUntil2by2(row + size, col + size, size, target, r, c);
+		}
+	}
+}
+int main()
+{
+	int n(0), r(0), c(0);
+	std::cin >> n >> r >> c;
+	if (n <= 15 && r >= 0 && c >= 0 && r <= std::pow(2, n)-1 && c <= std::pow(2, n)-1) // constraints
+	{
+		unsigned long int sizeOfMatrix = std::pow(2, n); // integer cannot contain 2^15
+
+		unsigned long int target = (r * sizeOfMatrix) - 1 + (c + 1); // we can find target value without making a matrix
+
+		DivideUntil2by2(0, 0, sizeOfMatrix, target, r , c);
+		std::cout << count << std::endl;
+	}
+}
