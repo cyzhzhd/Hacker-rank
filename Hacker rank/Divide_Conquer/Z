@@ -36,17 +36,17 @@ void DivideUntil2by2(unsigned long int row, unsigned long int col, unsigned long
 			DivideUntil2by2(row, col, size, target, r, c);
 		else if (r - row < size && c - col >= size) // right top
 		{
-			count += size * size;
+			count += size * size; // as we jump to right top quadrant 
 			DivideUntil2by2(row, col + size, size, target, r, c);
 		}
 		else if (r - row >= size && c - col < size) // left bottom
 		{
-			count += size * size * 2;
+			count += size * size * 2; // as we jump to left bottom quadrant 
 			DivideUntil2by2(row + size, col, size, target, r, c);
 		}
 		else if (r - row >= size && c - col >= size) // right bottom
 		{
-			count += size * size * 3;
+			count += size * size * 3; // as we jump to right bottom quadrant 
 			DivideUntil2by2(row + size, col + size, size, target, r, c);
 		}
 	}
@@ -65,3 +65,4 @@ int main()
 		std::cout << count << std::endl;
 	}
 }
+
