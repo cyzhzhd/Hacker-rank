@@ -1,0 +1,118 @@
+https://www.hackerrank.com/challenges/dijkstrashortreach/problem
+
+#include <iostream>
+#include <algorithm>
+
+// return true if everyting is completed
+bool Completed(bool * complete, int size)
+{
+	bool completed(true);
+	for (int i = 1; i <= size; ++i)
+	{
+		if (!complete[i])
+			completed = false;
+	}
+	return completed;
+}
+
+// find the next closest but uncompleted point from the start point
+int NextPosition(double* distance, bool * complete, int size)
+{
+	double min(INT64_MAX);
+	int minPos(-1);
+	for(int i = 1; i <= size; ++i)
+	{
+		if (distance[i] <= min && !complete[i])
+		{
+			min = distance[i];
+			minPos = i;
+		}
+	}
+	return minPos;
+}
+
+int main()
+{
+	int t(0); //t = test case
+	std::cin >> t;
+	for (int a = 0; a < t; ++a)
+	{
+		// n = # of Nodes, m = # of Edges
+		// x, y = beginning and ending edge, r = length of Edge, s = starting position
+		int n(0), x(0), y(0), s(0);
+		double m(0), r(0);
+		std::cin >> n >> m;
+
+		// set complete = true after searching it's every adjacent node
+		bool* complete = new bool[n + 1]; 
+		for (int i = 1; i <= n; ++i)
+			complete[i] = false;
+
+
+		double** nodes = new double* [n + 1];
+		for (int i = 1; i <= n; ++i)
+			nodes[i] = new double[n + 1];
+		// no edge = -1
+		for (int i = 1; i <= n; ++i)
+		{
+			for (int j = 1; j <= n; ++j)
+			{
+				nodes[i][j] = -1;
+			}
+		}
+		for (double i = 0; i < m; ++i)
+		{
+			std::cin >> x >> y >> r;
+			// store minimum value when there are multiple edges but a first edge should be stored no matter value it is
+			if (r < nodes[x][y] || nodes[x][y] < 0)
+			{
+				// undirected graph
+				nodes[x][y] = r;
+				nodes[y][x] = r;
+			}
+		}
+		// starting position
+		std::cin >> s; 
+
+		double* distance = new double[n + 1];
+		for (int i = 1; i <= n; ++i)
+			distance[i] = INT64_MAX;
+		// distance from starting edge to starting edge is 0
+		distance[s] = 0;
+
+		while (!Completed(complete, n))
+		{
+			int curPos = NextPosition(distance, complete, n);
+
+			// check whether the point is isolated 
+			bool isAlone(true);
+			for (int j = 1; j <= n; ++j)
+			{
+				if (distance[j] > distance[curPos] + nodes[curPos][j] && nodes[curPos][j] > 0)
+				{
+					distance[j] = distance[curPos] + nodes[curPos][j];
+				}
+
+				if (nodes[curPos][j] > 0)
+					isAlone = false;
+			}
+			if (isAlone)
+				distance[curPos] = -1;
+			// group of points could be not connected to the starting point
+			if (distance[curPos] == INT64_MAX)
+				distance[curPos] = -1;
+			complete[curPos] = true;
+		}
+
+
+		for (int i = 1; i <= n; ++i)
+		{
+			if (i != s)
+				std::cout << distance[i] << " ";
+		}
+		std::cout << std::endl;
+		delete[] nodes;
+		delete[] complete;
+		delete[] distance;
+	}
+}
