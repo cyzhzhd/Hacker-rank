@@ -1,0 +1,137 @@
+https://www.hackerrank.com/challenges/primsmstsub/problem?h_r=internal-search
+
+#include <iostream>
+#include <vector>
+#include <set>
+#include <list>
+using namespace std;
+
+struct Edge { int to; long cost; };
+struct Edge_prim { int from; long cost; };
+
+int NextIndex(Edge_prim* prim, set<int> completed, int size)
+{
+	int min(INT32_MAX), minIndex(0);
+	for (int i = 0; i < size; ++i)
+	{
+		if (min > prim[i].cost && completed.count(i) == 0)
+		{
+			min = prim[i].cost;
+			minIndex = i;
+		}
+	}
+	return minIndex;
+}
+
+int main()
+{
+	// n = # of vertices, x = from vertex, y = to vertex, start = starting vertex
+	int n(0), x(0), y(0), s(0);
+	// m = # of edges, r = cst
+	long m(0), r(0), mst_cost(0);
+
+	cin >> n >> m;
+	// adj_list[from] = Edge{to, cost}
+	std::vector<std::list<Edge>> adj_list  (n, list<Edge>());
+	// prim[to] = Edge_prim{from, cost}
+	Edge_prim* prim = new Edge_prim[n];
+	set<int> completed;
+
+	for (long i = 0; i < m; ++i)
+	{
+		cin >> x >> y >> r;
+		// from, Edge(to, cost)
+		adj_list[--x].push_back(Edge{ --y, r });
+		adj_list[y].push_back(Edge{ x, r });
+	}
+
+	cin >> s;
+	for (int i = 0; i < n; ++i)
+		prim[i].cost = INT32_MAX;
+	prim[--s].cost = 0;
+	
+	// store minimum cost of reaching certain vertex in prim
+	while (completed.size() < n)
+	{
+		int next = NextIndex(prim, completed, n);
+		mst_cost += prim[next].cost;
+		for (auto &edge : adj_list[next])
+		{
+			if (prim[edge.to].cost > edge.cost)
+			{
+				prim[edge.to].cost = edge.cost;
+				prim[edge.to].from = next;
+			}
+		}
+		completed.insert(next);
+	}
+  // print path
+	//for (int i = 0; i < n; ++i)
+	//{
+	//	cout << "cost from " << prim[i].from << " to " << i << " = " << prim[i].cost << endl;
+	//}
+	cout << mst_cost << endl;
+}
+
+
+
+
+
+
+shan23's solution
+
+#include <vector>
+#include <iostream>
+#include <set>
+#include <list>
+#include <climits>
+using namespace std;
+
+struct Edge { int to, cost; };
+
+int main() 
+{
+    int n, m, s;
+    cin >> n >> m;
+    vector<list<Edge>>  adj_list(n, list<Edge>());
+    set<pair<int, int> > remaining; // <cost, vertex_idx>
+    set<int>             added;
+    vector<Edge>         mst;
+    vector<int>          min_cost(n, INT_MAX);
+
+    for (int i = 0; i < m; ++i) {
+        int x, y, r;
+        cin >> x >> y >> r;
+        --x; --y;
+        adj_list[x].push_back(Edge{ y, r });
+        adj_list[y].push_back(Edge{ x, r });
+    }
+    cin >> s;
+    min_cost[--s] = 0;
+
+
+
+    for (int i = 0; i < n; ++i)
+        remaining.insert({ min_cost[i], i });
+
+    long mst_cost = 0;
+    while (!remaining.empty()) {
+        int next = remaining.begin()->second;
+        mst_cost += min_cost[next];
+        added.insert(next);
+        remaining.erase(remaining.begin());
+        for (auto& ed : adj_list[next]) {
+            // Consider only nodes not added yet
+            if (added.count(ed.to) == 1)
+                continue;  // 
+            int curr_min = min_cost[ed.to];
+            if (ed.cost < curr_min) {
+                remaining.erase({ curr_min, ed.to });
+                min_cost[ed.to] = ed.cost;
+                remaining.insert({ min_cost[ed.to], ed.to });
+            }
+        }
+    }
+    cout << mst_cost;
+    return 0;
+}
