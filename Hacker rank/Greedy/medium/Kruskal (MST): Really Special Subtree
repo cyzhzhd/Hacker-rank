@@ -1,0 +1,74 @@
+https://www.hackerrank.com/challenges/kruskalmstrsub/problem?h_r=internal-search
+
+#include <set>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Edge 
+{
+	int from, to; 
+	
+	// set store system defined data type only(eg. int, float, double, pair etc.)So, in order to store a structure in a set, some comparison function needs to be designed.
+	bool operator<(const Edge& e) const
+	{
+		return (this->from < e.from);
+	}
+};
+
+int FindRoot(std::vector<int> &root, int node)
+{
+	if (root[node] == -1)
+		return node;
+	return FindRoot(root, root[node]);
+}
+
+bool Union(std::vector<int> &root, Edge edge)
+{
+	int rootA = FindRoot(root, edge.from);
+	int rootB = FindRoot(root, edge.to);
+	if (rootA != rootB)
+	{
+		root[rootB] = rootA;
+		return true;
+	}
+	return false;
+}
+
+int main()
+{
+	int g_nodes(0), g_from(0), g_to(0);
+	long g_edges(0), g_weight(0), mst_cost(0);
+	cin >> g_nodes >> g_edges;
+	std::set<pair<int, Edge>> tree;
+	std::set<pair<int, Edge>> subtree;
+	std::set<int> completed;
+	std::vector<int> root(g_nodes + 1, -1);
+		
+
+	for (int i = 0; i < g_edges; ++i)
+	{
+		cin >> g_from >> g_to >> g_weight;
+		tree.insert({ g_weight, Edge{g_from, g_to} });
+	}
+
+	// while all nodes are connected
+	while (subtree.size() < g_nodes - 1)
+	{
+		Edge nextEdge = tree.begin()->second;
+		if (Union(root, nextEdge))
+		{
+			subtree.insert({ tree.begin()->first, nextEdge });
+			mst_cost += tree.begin()->first;
+		}
+		tree.erase(tree.begin());
+	}
+	std::cout << mst_cost << endl;
+
+	// print route
+	/*for (auto& st : subtree)
+	{
+		cout << "from " << st.second.from << " to " << st.second.to << " = " << st.first << endl;
+	}*/
+}
+
