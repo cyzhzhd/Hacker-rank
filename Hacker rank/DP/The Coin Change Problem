@@ -1,2 +1,71 @@
 https://www.hackerrank.com/challenges/coin-change/problem
 
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()
+{
+	int n(0), m(0);
+	cin >> n >> m;
+	int* coins = new int[m];
+	for (int i = 0; i < m; ++i)
+	{
+		cin >> coins[i];
+	}
+
+	// m, n+1 matrix. 
+	std::vector<std::vector<long>> numOfWays(m, std::vector<long>(n + 1));
+	for (int i = 0; i < m; i++)
+	{
+		numOfWays[i][0] = 1;
+
+	}
+	for (int i = 0; i < m; ++i)
+	{
+		for (long j = 1; j < n + 1; ++j)
+		{
+			long x, y;
+			x = (i > 0) ? numOfWays[i - 1][j] : 0;
+			y = (j - coins[i] >= 0) ? numOfWays[i][j - coins[i]] : 0;
+			numOfWays[i][j] = x + y;
+		}
+	}
+	cout << numOfWays[m - 1][n] << endl;
+}
+
+
+------------------------------------------------------
+rwan7727's code
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n;
+    int m;
+    cin >> n >> m;
+    vector <long> c(m);
+    for (int i = 0; i < m; i++) cin >> c[i];
+
+    vector <long> numways(n + 1); // numways[x] means # ways to get sum x
+    numways[0] = 1; // init base case n=0
+
+    // go thru coins 1-by-1 to build up numways[] dynamically
+    // just need to consider cases where sum j>=c[i]    
+    for (int i = 0; i < m; i++) {
+        for (int j = c[i]; j <= n; j++) {
+            // find numways to get sum j given value c[i]
+            // it consists of those found earlier plus
+            // new ones.
+            // E.g. if c[]=1,2,3... and c[i]=3,j=5,
+            //      new ones will now include '3' with
+            //      numways[2] = 2, that is:
+            //      '3' with '2', '3' with '1'+'1'
+            numways[j] += numways[j - c[i]];
+        }
+    }
+
+    cout << numways[n];
+    return 0;
+}
