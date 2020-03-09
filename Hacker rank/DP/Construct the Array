@@ -1,0 +1,32 @@
+https://www.hackerrank.com/challenges/construct-the-array/problem
+
+#include <vector>
+#include <iostream>
+using namespace std;
+int main()
+{
+	long n(0), k(0), x(0);
+	cin >> n >> k >> x;
+
+	// row represents last number of array, col represents size of array
+	// numWays[i][j] equals sum of numWays[i][j-1] but numWays[i-1][j-1] because succesive number cannot come together
+	// Thus, last number does not matter except in case of ending with 1
+	std::vector<std::vector<long>> numWays(3, std::vector<long>(n+1, 0));
+	
+	// array always starts with 1 so there is only one case '1'
+	numWays[1][1] = 1;
+	
+	for (int j = 2; j < n+1; ++j)
+	{
+		numWays[1][j] = (numWays[2][j - 1] * (k-1)) % 1000000007;
+		if(j % 2 == 0)
+			numWays[2][j] = numWays[1][j] + 1;
+		else
+			numWays[2][j] = numWays[1][j] - 1;
+	}
+
+	if (x == 1)
+		cout << numWays[1][n] << endl;
+	else
+		cout << numWays[2][n] << endl;
+}
