@@ -1,0 +1,72 @@
+https://www.hackerrank.com/challenges/fibonacci-modified/problem
+
+#include <vector>
+#include <iostream>
+#include <math.h>
+#include <string>
+using namespace std;
+
+std::string StrPlus(std::string str1, std::string str2);
+std::string StrPow(std::string str1, int n);
+
+int main()
+{
+	//string str = "123";
+	//string str2 = "1234";
+
+	//std::string str3 = StrPlus("159", "159");
+	//cout << StrPlus(str3, "912") <<endl;
+	//cout << (str[3] - '0') + (str2[3] - '0') << endl;
+	std::string t1(""), t2("");
+	int n(0);
+	cin >> t1 >> t2>> n;
+	std::vector<std::string> fibo(n+1);
+
+	fibo[1] = t1;
+	fibo[2] = t2;
+	for (int i = 3; i <= n; ++i)
+	{
+		fibo[i] = StrPlus(fibo[i - 2], StrPow(fibo[i - 1], 2));
+	}
+	cout << fibo[n] << endl;
+}
+
+std::string StrPlus(std::string str1, std::string str2)
+{
+	int lastPos1 = str1.size() - 1;
+	int lastPos2 = str2.size() - 1;
+	std::string sum;
+	int size = lastPos1 > lastPos2 ? lastPos1 + 2 : lastPos2 + 2;
+	sum.resize(size, '0');
+
+	int tempSize = size - 1;
+	while (lastPos1 >= 0)
+	{
+		sum[tempSize--] = str1[lastPos1--];
+	}
+
+	tempSize = size - 1;
+	while (lastPos2 >= 0)
+	{
+		int a = str2[lastPos2--] - '0';
+		if ((sum[tempSize] - '0') + a >= 10)
+		{
+			sum[tempSize] = '0' + ((sum[tempSize] - '0') + a - 10);
+			sum[tempSize-1] = '0' + ((sum[tempSize-1] - '0') + 1);
+			tempSize--;
+		}
+		else
+		{
+			sum[tempSize] = '0' + ((sum[tempSize] - '0') + a);
+			tempSize--;
+		}
+	}
+
+	if (sum[0] == '0')
+		sum = sum.substr(1, sum.size() - 1);
+	return sum;
+}
+std::string StrPow(std::string str1, int n)
+{
+	return str1;
+}
