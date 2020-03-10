@@ -1,5 +1,6 @@
 https://www.hackerrank.com/challenges/fibonacci-modified/problem
-Could not pass the test with c++ due to  time limits
+Could not pass the test with c++ due to time limits
+Algorithm itself is easy but taking care of big integers are hard.
 
 
 #include <vector>
