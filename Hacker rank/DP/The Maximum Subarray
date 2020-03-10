@@ -1,0 +1,42 @@
+https://www.hackerrank.com/challenges/maxsubarray/problem
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+int main()
+{
+	int t(0);
+	cin >> t;
+	while (t--)
+	{
+		int n(0);
+		cin >> n;
+		std::vector<int> arr(n);
+		for (int& i : arr)
+			cin >> i;
+
+		int max_subseq(INT16_MIN);
+		int sum_subseq(0);		
+		int max_subarr(0);
+		for (int& i : arr)
+		{
+			// subseq
+			sum_subseq += i;
+			max_subseq = sum_subseq > max_subseq ? sum_subseq : max_subseq;
+			// if sum becoms smaller than 0, reset and start again
+			if (sum_subseq < 0)
+			{
+				sum_subseq = 0;
+			}
+
+			// subarr
+			if (i > 0)
+				max_subarr += i;
+		}
+		// in case every element is negative
+		if (max_subarr == 0)
+			max_subarr = *max_element(arr.begin(), arr.end());
+		cout << max_subseq << " " << max_subarr << endl;
+	}
+}
