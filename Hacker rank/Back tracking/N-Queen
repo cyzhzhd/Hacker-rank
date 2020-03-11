@@ -1,0 +1,67 @@
+https://www.acmicpc.net/problem/9663
+
+#include <vector>
+#include <iostream>
+using namespace std;
+
+/*
+	We are using back tracking algorithm here.
+	Search every possible options. Dismiss a option once the option is not satisfying rules
+*/
+
+void FindPosition(std::vector<int>& positions, int pos);
+bool Expand(std::vector<int>& positions, int pos, int n);
+int numWays(0);
+
+int main()
+{
+	int n(0);
+	cin >> n;
+	if (n >= 1 && n < 15)
+	{
+		std::vector<int> positions(n, 0);	
+		// all possible options in the first row
+		for (int col = 0; col < positions.size(); ++col)
+		{
+				positions[0] = col;
+				FindPosition(positions, 1);
+		}
+		cout << numWays << endl;
+	}
+}
+
+void FindPosition(std::vector<int>& positions, int row)
+{
+	// row reaches size of the matrix means it sets all the queens while satisfying the rule.
+	if (row == positions.size())
+	{
+		numWays++;
+		// print position of queens
+		//for (int i : positions)
+		//	cout << i << ' ';
+		//cout << endl;
+		return;
+	}
+
+	// check all the possibility, set a queen on every col, and proceed to the next row
+	for (int col = 0; col < positions.size(); ++col)
+	{
+		if (Expand(positions, row, col))
+		{
+			positions[row] = col;
+			FindPosition(positions, row + 1);
+		}
+	}
+}
+
+bool Expand(std::vector<int>& positions, int row, int col)
+{
+	for (int i = row - 1; i >= 0; --i)
+	{
+		// rule 1: queens shouldn't be placed in the same col.
+		// rule 2: queens shouldn't be places in the same diagonal.
+		if (positions[i] == col || abs(col - positions[i]) == row - i)
+			return false;
+	}
+	return true;
+}
