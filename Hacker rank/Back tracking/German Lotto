@@ -1,0 +1,54 @@
+https://www.acmicpc.net/problem/6603
+
+#include <vector>
+#include <iostream>
+using namespace std;
+
+void FindCases(std::vector<int> candidates, int* combination, int next, int numExcluded);
+
+int main()
+{
+    int k(0);
+    cin >> k;
+    while (k != 0)
+    {
+        std::vector<int> candidates(k);
+        for (int i = 0; i < k; ++i)
+            cin >> candidates[i];
+
+        int combination[6];
+        FindCases(candidates, combination, 0, 0);
+        cout << endl;
+        cin >> k;
+    }
+}
+
+void FindCases(std::vector<int> candidates, int* combination, int next, int numExcluded)
+{
+    // print when we get a combination
+    if (next == 6)
+    {
+        for (int i = 0; i < 6; ++i)
+        {
+            cout << combination[i] << ' ';
+        }
+        cout << endl;
+        return;
+    }
+
+    // we cannot exclude any more candidates when there are less than 6 candidates left
+    // otherwise backtracking all the possible processes.
+    if (numExcluded == candidates.size() - 6)
+    {
+        combination[next] = candidates[next + numExcluded];
+        FindCases(candidates, combination, next + 1, numExcluded);
+    }
+    else
+    {
+        combination[next] = candidates[next + numExcluded];
+        // include candidates
+        FindCases(candidates, combination, next + 1, numExcluded);
+        // exclude candidates
+        FindCases(candidates, combination, next, numExcluded + 1);
+    }
+}
