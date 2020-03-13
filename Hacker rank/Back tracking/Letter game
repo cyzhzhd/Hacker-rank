@@ -1,0 +1,65 @@
+https://www.acmicpc.net/problem/1987
+
+#include <vector>
+#include <iostream>
+using namespace std;
+
+void Visit(char** board, int r, int c, std::vector<char>& visited, int count);
+bool Movable(char** board, int r, int c, std::vector<char>& visited, int count);
+int maxMove(0), row(0), col(0);
+
+int main()
+{
+	cin >> row >> col;
+	char** board = new char* [row];
+	for (int i = 0; i < row; ++i)
+		board[i] = new char[col];
+
+	for (int i = 0; i < row; ++i)
+	{
+		for (int j = 0; j < col; ++j)
+		{
+			cin >> board[i][j];
+		}
+	}
+	
+	std::vector<char> visited(row * col, '0');
+	Visit(board, 0, 0, visited, 1);
+	cout << maxMove << endl;
+
+}
+
+// try to visit every direction
+void Visit(char** board, int r, int c, std::vector<char>& visited, int count)
+{
+	if (maxMove < count)
+		maxMove = count;
+
+	visited[count] = board[r][c];
+	// visit only if we can visit there
+	if (Movable(board, r, c + 1, visited, count))
+		Visit(board, r, c + 1, visited, count + 1);
+
+	if (Movable(board, r + 1, c, visited, count))
+		Visit(board, r + 1, c, visited, count + 1);
+
+	if (Movable(board, r, c - 1, visited, count))
+		Visit(board, r, c - 1, visited, count + 1);
+
+	if (Movable(board, r - 1, c, visited, count))
+		Visit(board, r - 1, c, visited, count + 1);
+}
+
+// if we can visit r,c then return true 
+bool Movable(char** board, int r, int c, std::vector<char>& visited, int count)
+{
+	if (r < 0 || c < 0 || r >= row || c >= col)
+		return false;
+
+	for (int i = 1; i <= count; ++i)
+	{
+		if (visited[i] == board[r][c])
+			return false;
+	}
+	return true;
+}
