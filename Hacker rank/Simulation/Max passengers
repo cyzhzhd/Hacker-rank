@@ -1,0 +1,28 @@
+https://www.acmicpc.net/problem/2455
+
+#include <vector>
+#include <iostream>
+#include <utility>
+using namespace std;
+
+int GetMaxPassengers(std::vector<std::pair<int, int>> fluctuate)
+{
+	int max(0), sum(0);
+	for (int i = 0; i < fluctuate.size(); ++i)
+	{
+		sum += -fluctuate[i].first + fluctuate[i].second;
+		if (max < sum)
+			max = sum;
+	}
+	return max;
+}
+int main()
+{
+	std::vector<std::pair<int, int>> fluctuate(4);
+	for (int i = 0; i < 4; ++i)
+	{
+		cin >> fluctuate[i].first >> fluctuate[i].second;
+	}
+
+	cout << GetMaxPassengers(fluctuate) << endl;	
+}
