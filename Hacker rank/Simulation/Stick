@@ -1,0 +1,30 @@
+https://www.acmicpc.net/problem/1094
+
+#include <vector>
+#include <iostream>
+using namespace std;
+int main()
+{
+	int length(64), x(0), count(0);
+	cin >> x;
+	std::vector<int> sticks;
+	while (length > 0)
+	{
+		sticks.push_back(length);
+		length /= 2;
+	}
+
+	for (int i : sticks)
+	{
+		if (i <= x)
+		{
+			x -= i;
+			count++;
+		}
+		if (x == 0)
+		{
+			cout << count << endl;
+			break;
+		}
+	}
+}
