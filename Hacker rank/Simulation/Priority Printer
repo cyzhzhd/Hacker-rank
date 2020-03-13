@@ -1,0 +1,63 @@
+https://www.acmicpc.net/problem/1966
+
+#include <queue>
+#include <vector>
+#include <iostream>
+using namespace std;
+
+
+int GetPriority(std::vector<int>& arr, std::priority_queue<int>& pq, int m)
+{
+	int priority(1);
+	while (!pq.empty())
+	{
+		int max = pq.top();
+		pq.pop();
+
+		while(true)
+		{
+			std::vector<int>::iterator iter = arr.begin();
+			// rearrange element if it is not the priority one
+			if (arr[0] == max)
+			{
+				if (m == 0)
+					return priority;
+				// arr[0] = max but it is not the one we are looking for
+				arr.erase(iter, iter + 1);
+				priority++; m--;
+				break;
+			}
+			else
+			{
+				int curValue = arr[0];
+				arr.erase(iter, iter + 1);
+				arr.push_back(curValue);
+			}
+			// we should rearrange it's index too
+			if (m == 0)
+				m = arr.size() - 1;
+			else
+				m--;
+		}
+	}
+}
+
+int main()
+{
+	int t(0);
+	cin >> t;
+	while (t--)
+	{
+		int n(0), m(0);
+		cin >> n >> m;
+		std::vector<int> arr(n);
+		std::priority_queue<int> pq;
+		for (int& i : arr)
+		{
+			cin >> i;
+			pq.push(i);
+		}
+
+		cout << GetPriority(arr, pq, m) << endl;
+	}
+}
