@@ -1,0 +1,74 @@
+#include <vector>
+#include <iostream>
+#include <stack>
+#include <utility>
+#include <string>
+
+void GoDownhill(std::vector<std::vector<int>>& map, int r, int c, int curHeight);
+std::string GetExpandableDirection(std::vector<std::vector<int>>& map, int r, int c, int curHeight);
+
+int row(0), col(0), numWays(0);
+
+int main()
+{
+	std::cin >> row >> col;
+	std::vector<std::vector<int>> map(row, std::vector<int>(col, 0));
+	for (int i = 0; i < row; ++i)
+		for (int j = 0; j < col; ++j)
+			std::cin >> map[i][j];
+
+	if(map[0][0] - row - col + 2 >= map[row-1][col-1])
+		GoDownhill(map, 0, 0, 0);
+	std::cout << numWays << std::endl;
+}
+
+void GoDownhill(std::vector<std::vector<int>>& map, int r, int c, int curHeight)
+{
+	std::stack<std::pair<int, int>> stack;
+	stack.push({ r,c });
+	while (!stack.empty())
+	{
+		std::pair<int, int> curPos = stack.top();
+		stack.pop();
+		if (curPos.first == row - 1 && curPos.second == col - 1)
+		{
+			numWays++;
+			continue;
+		}
+
+		curHeight = map[curPos.first][curPos.second];
+		std::string dir = GetExpandableDirection(map, curPos.first, curPos.second, curHeight);
+
+		for(int i = 0; i < dir.size(); ++i)
+		{
+			if (dir[i] == 'N')
+				stack.push({ curPos.first - 1, curPos.second });
+			if (dir[i] == 'S')
+				stack.push({ curPos.first + 1, curPos.second });
+			if (dir[i] == 'W')
+				stack.push({ curPos.first, curPos.second - 1 });
+			if (dir[i] == 'E')
+				stack.push({ curPos.first, curPos.second + 1 });
+		}
+	}
+}
+
+std::string GetExpandableDirection(std::vector<std::vector<int>>& map, int r, int c, int curHeight)
+{
+	std::string expandableDirection("");
+
+	// to east
+	if (c + 1 < col && curHeight > map[r][c + 1])
+		expandableDirection.push_back('E');
+	// to west
+	if (c - 1 >= 0 && curHeight > map[r][c - 1])
+		expandableDirection.push_back('W');
+	// to south
+	if (r + 1 < row && curHeight > map[r + 1][c])
+		expandableDirection.push_back('S');
+	// to north
+	if (r - 1 >= 0 && curHeight > map[r - 1][c])
+		expandableDirection.push_back('N');
+
+	return expandableDirection;
+}
