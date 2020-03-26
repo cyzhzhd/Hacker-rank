@@ -1,0 +1,216 @@
+https://www.hackerrank.com/challenges/kingdom-division/problem
+
+// wrong answer. 
+// Test case 1 5 & 7 - 5 means 5 has two parents. Thus, postorderTraverse cannot solve this problem because it is not a tree. 
+// We should use depth first search approach.
+#include <vector>
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    long name;
+    double numWays;
+    long numSon;
+    Node* left;
+    Node* right;
+    Node* parent;
+
+    Node(int name2)
+    {
+        name = name2;
+        numWays = 0;
+        numSon = 0;
+        left = nullptr;
+        right = nullptr;
+        parent = nullptr;
+    }
+};
+
+void CalculateNumWays(Node* node)
+{
+    if (node->left != nullptr)
+        node->numSon += node->left->numSon + 1;
+    if (node->right != nullptr)
+        node->numSon += node->right->numSon + 1;
+
+    if (node->numSon >= 3 )
+    {
+        if (node->parent != nullptr)
+        {
+            if (node->left == nullptr || node->right == nullptr)
+            {
+                node->numWays = node->right == nullptr ? node->left->numWays + node->left->left->numWays : node->right->numWays + node->right->numWays;
+            }
+            else
+            {
+                    node->numWays = node->left->numWays * node->right->numWays * 2;
+            }
+        }
+        else
+        {
+            if (node->left == nullptr || node->right == nullptr)
+            {
+                node->numWays = node->right == nullptr ? node->left->numWays : node->right->numWays;
+            }
+            else
+            {
+                node->numWays = node->left->numWays * node->right->numWays;
+            }
+        }
+    }
+    else
+    {
+        node->numWays = 2;
+    }
+}
+
+void PostorderTraverse(Node* node)
+{
+    if (node == nullptr)
+        return;
+
+    PostorderTraverse(node->left);
+    PostorderTraverse(node->right);
+    CalculateNumWays(node);
+    //cout << "Node " << node->name << " : " << node->numWays << endl;
+}
+
+Node* FindRoot(Node* node)
+{
+    while (node->parent != nullptr)
+        node = node->parent;
+
+    return node;
+}
+
+int main()
+{
+    long n(0);
+    cin >> n;
+    // make a tree
+    std::vector<Node*> tree(n + 1);
+    int name(0);
+    for (auto& i : tree)
+        i = new Node(name++);
+
+    for (int i = 1; i < n; ++i)
+    {
+        int u(0), v(0);
+        cin >> u >> v;
+        if (tree[u]->left == nullptr)
+            tree[u]->left = tree[v];
+        else
+            tree[u]->right = tree[v];
+        tree[v]->parent = tree[u];
+    }
+    Node* root = FindRoot(tree[1]);
+    PostorderTraverse(root);
+    cout << root->numWays << endl;
+
+}
+
+
+xinwzh's code and explanation
+/*
+Idea: since it's a DP problem, see if we can build the configurations of a node based on its children. Answer is yes.
+For any node, there are two cases which are helpful to build the solution for its parent:
+(1) the node's subtree is a        good configuration, excluding its parent;
+(2) the node's subtree is a nearly good configuration, it's good when its parent is included, i.e. the direct children of the node all have the same color, which is the opposite of the node (itself is bad, rest is good); when the parent of this node has the same color, the node becomes good, therefore, this nearly good configuration becomes good.
+So we need to save above two numbers for each node.
+Denote G1r to be the number of        good configurations for node 1 when it is red, i.e. (1);
+Denote B1r to be the number of nearly good configurations for node 1 when it is red, i.e. (2);
+Obviouse by symmetry: G1r = G1b, B1r = B1b.
+Let's look at an example, we have 3 nodes: 1, 2, 3, 1 is head and the parent of 2 and 3.
+B1r = G2b * G3b: 1 is red, 2 and 3 are blue, this is by definition from (2)
+What's G1r then? Since for node 2 and 3, each has 4 numbers, let's do first attempt by naive multiplication rule:
+Version 1: G1r = (G2b + G2r + B2r + B2b) * (G3b + G3r + B3r + B3b)
+We realize: given 1 is red, B2b should be removed, because 1 being red doesn't save 2 from being a bad node, so does B3b, which gives:
+Version 2: G1r = (G2b + G2r + B2r) * (G3b + G3r + B3r)
+We then realize: G2b and G3b can not happen at the same time, otherwise 1 is connected to two blue nodes, making 1 a bad node
+Therefore, we have
+Version 3: G1r = (G2b + G2r + B2r) * (G3b + G3r + B3r) - G2b * G3b, which is the correct one.
+In the c++ code: G stands for Gnr/Gnb, B stands for Bnr/Bnb;
+*/
+
+const long MOD = long(1e9+7);
+
+struct Node {
+    int a{0};
+    bool visited{false};
+    unordered_set<Node*> connected;
+    Node(int m) : a(m) { }
+};
+
+class Graph {
+  private:
+    vector<Node> nodes;
+  public:
+    Graph(int n) {
+        for (int i=1; i<=n; i++) {
+            nodes.push_back(Node(i));
+        }
+    }
+    void add_edge(int u, int v) {
+        nodes[u-1].connected.insert(&nodes[v-1]);
+        nodes[v-1].connected.insert(&nodes[u-1]);
+    }
+    long count();
+    void solve(Node *n, vector<long long> &G, vector<long long> &B, vector<int> &P); // ATTN: long long instead of long
+    void set_parents(Node *n, vector<int> &P);
+    void set_visited_all(bool b) {
+        for (auto &n : nodes)
+            n.visited = b;
+    }
+};
+
+void Graph::set_parents(Node *node, vector<int> &P) {
+    node->visited = true;
+    for (auto n : node->connected) {
+        if (n->visited)
+            continue;
+        P[n->a] = node->a;
+        if (n->connected.size() > 1)
+            set_parents(n, P);
+    }
+}
+
+void Graph::solve(Node *node, vector<long long> &G, vector<long long> &B, vector<int> &P) {
+    node->visited = true;
+    if (P[node->a] && node->connected.size() == 1) { // ATTN: leaf node, be careful when head has only one child
+        B[node->a] = 1;
+        G[node->a] = 0;
+        return;
+    }
+    for (auto n : node->connected) {
+        if (n->visited)
+            continue;
+        if (G[n->a] == -1)
+            solve(n, G, B, P);
+    }
+    B[node->a] = 1;
+    G[node->a] = 1;
+    for (auto n : node->connected) {
+        if (n->a == P[node->a]) // skip parent
+            continue;
+        B[node->a] *= G[n->a]%MOD; // ATTN: do MOD as we go
+        G[node->a] *= (2*G[n->a]+B[n->a])%MOD;
+        B[node->a] %= MOD;
+        G[node->a] %= MOD;
+    }
+    G[node->a] -= B[node->a];
+    while (G[node->a] < 0) // ATTN: be careful when G < B
+        G[node->a] += MOD;
+}
+
+long Graph::count() {
+    size_t n = nodes.size();
+    vector<long long> G(n+1,-1), B(n+1, -1);
+    vector<int> P(n+1,0);
+    int a = rand() % n;
+    a = 0;
+    set_parents(&nodes[a], P);
+    set_visited_all(false);
+    solve(&nodes[a], G, B, P);
+    return 2*G[a+1] % MOD;
+}
