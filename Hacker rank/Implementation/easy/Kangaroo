@@ -1,0 +1,30 @@
+https://www.hackerrank.com/challenges/kangaroo/problem
+
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	int x1(0), v1(0), x2(0), v2(0);
+	cin >> x1 >> v1 >> x2 >> v2;
+	
+	if (x1 < x2 && v1 <= v2)
+	{
+		cout << "NO" << endl;
+	}
+	else
+	{
+		while (x1 <= x2)
+		{
+			x1 += v1;
+			x2 += v2;
+			if (x1 == x2)
+				break;
+		}
+		if (x1 == x2)
+			cout << "YES" << endl;
+		else
+			cout << "NO" << endl;
+	}
+}
