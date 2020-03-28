@@ -73,6 +73,39 @@ int main()
 
 
 
+Last try
+
+#include <string>
+#include <iostream>
+#include <vector>
+long const modulo = 1000000007;
+
+int main()
+{
+	// There is a pattern in this problem.
+	// Thus we can directly get a value from previous value (DP).
+	// let's say we need to get a sum of substrings of 162.
+	// substring of 1 is 1 ==> newly added = 1
+	// substrings of 16 are 1 / 16, 6 ==> newly added = 1 * 10 + 6 * 2 = 22
+	// substrings of 162 are 1, 16, 6 / 162 , 62, 2 ==> newly added = 22 * 10 + 2 * 2 == 226
+
+	std::string n("");
+	std::cin >> n;
+	long sum(0);
+	std::vector<long> totalAddedArray(n.size());
+	std::vector<long> newlyAddedArray(n.size());
+
+	totalAddedArray[0] = n[0] - '0';
+	newlyAddedArray[0] = n[0] - '0';
+
+	for (int i = 1; i < n.size(); ++i)
+	{
+		newlyAddedArray[i] = (newlyAddedArray[i - 1] * 10 + ((n[i] - '0') * (i + 1))) % modulo;
+		totalAddedArray[i] = (newlyAddedArray[i] + totalAddedArray[i - 1]) % modulo;
+	}
+
+	std::cout << totalAddedArray[n.size()-1] << std::endl;
+}
 
 
 
