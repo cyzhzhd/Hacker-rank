@@ -1,0 +1,39 @@
+https://www.hackerrank.com/challenges/sam-and-substrings/problem
+
+
+
+
+
+
+
+
+// Abort() error occurs on line 23
+// std::stod throws the exception std::out_of_range if the value that it parsed from the string it outside the range of values that double can hold.
+// The largest value that a typical double implementation can hold is roughly 300 digits long.
+
+#include <string>
+#include <iostream>
+#include <vector>
+double const modulo = 1000000007;
+
+int main()
+{
+    std::string n("");
+    std::cin >> n;
+    long sum(0);
+    std::vector<std::string> newlyAddedSubstring;
+
+    for (auto i : n)
+    {
+        for (auto &j : newlyAddedSubstring)
+        {
+            j += i;
+            long d = std::fmod(std::stod(j), modulo);
+            sum = std::fmod(sum + d, modulo);
+        }
+        newlyAddedSubstring.push_back(std::string(1, i)); 
+        newlyAddedSubstring.back();
+        sum = std::fmod(sum + (i - '0'), modulo);
+    }
+    std::cout << sum << std::endl;
+}
