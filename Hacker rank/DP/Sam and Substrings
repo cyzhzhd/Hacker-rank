@@ -1,15 +1,12 @@
 https://www.hackerrank.com/challenges/sam-and-substrings/problem
 
 
-
-
-
-
-
+First Try
 
 // Abort() error occurs on line 23
 // std::stod throws the exception std::out_of_range if the value that it parsed from the string it outside the range of values that double can hold.
 // The largest value that a typical double implementation can hold is roughly 300 digits long.
+// Also, in general, floating-point values are not able to represent integers exactly. Therefore it is pretty pointless to do the modulo operation on the double.
 
 #include <string>
 #include <iostream>
@@ -37,3 +34,46 @@ int main()
     }
     std::cout << sum << std::endl;
 }
+
+
+
+
+
+
+Second Try
+
+// O(N^2) does not execute within the time limits
+// need to make it at least O(nlogn)
+#include <string>
+#include <iostream>
+#include <vector>
+long const modulo = 1000000007;
+
+int main()
+{
+	std::string n("");
+	std::cin >> n;
+	long sum(0);
+	std::vector<long> newlyAddedSubstring;
+
+	for (auto i : n)
+	{
+		int currentDigit = i - '0';
+		for (auto &j : newlyAddedSubstring)
+		{
+			j = (j * 10 + currentDigit) % modulo;
+			sum = std::fmod(sum + j, modulo);
+		}
+		newlyAddedSubstring.push_back(currentDigit);
+		newlyAddedSubstring.back();
+		sum = std::fmod(sum + (currentDigit), modulo);
+	}
+	std::cout << sum << std::endl;
+}
+
+
+
+
+
+
+
