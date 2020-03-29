@@ -1,0 +1,25 @@
+https://www.hackerrank.com/challenges/minimum-absolute-difference-in-an-array/problem
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+int main()
+{
+	int n(0);
+	std::cin >> n;
+	std::vector<int> arr(n);
+	for (int& i : arr)
+		std::cin >> i;
+	
+	// sort first and get differences. We can make O(n) time complexity.
+	std::sort(arr.begin(), arr.end());
+	int min = INT32_MAX;
+	int num1(0);
+	int num2(0);
+	for (int i = 0; i < n - 1; ++i)
+	{
+		min = abs(arr[i] - arr[i+1]) < min ? abs(arr[i] - arr[i + 1]) : min;
+	}
+	std::cout << min << std::endl;
+}
