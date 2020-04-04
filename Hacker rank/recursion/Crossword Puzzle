@@ -1,5 +1,122 @@
 https://www.hackerrank.com/challenges/crossword-puzzle/problem
 
+// Editorial
+
+#include <vector>
+#include <iostream>
+#include <string>
+using namespace std;
+
+vector<string> grid(10);
+vector<string> words;
+bool f;
+
+void call(int index)
+{
+    if (!f) 
+        return;
+
+
+    // print filled grid
+    if (index == words.size()) 
+    {
+        if (f) 
+        {
+            for (auto word : grid) 
+            {
+                cout << word << endl;
+            }
+            f = false;
+        }
+        return;
+    }
+
+    int i, j, p, q, k;
+    for (i = 0; i < 10; ++i) 
+    {
+        for (j = 0; j < 10; ++j) 
+        {
+            p = i, q = j;
+            // Fill vertically
+            for ( k = 0; k < words[index].size() && p + k < 10; ++k) 
+            {
+                if (grid[p + k][q] != '-' && grid[p + k][q] != words[index][k]) 
+                {
+                    break;
+                }
+            }
+
+            if (k == words[index].size()) 
+            {
+                vector<string> temp = grid;
+                for (k = 0; k < words[index].size(); ++k) 
+                {
+                    grid[p + k][q] = words[index][k];
+                }
+                call(index + 1);
+                // roll back if the word is not fitting into the grid.
+                grid = temp;
+            }
+
+            // Fill horizontally
+            for (k = 0; k < words[index].size() && q + k < 10; ++k) 
+            {
+                if (grid[p][q + k] != '-' && grid[p][q + k] != words[index][k]) 
+                {
+                    break;
+                }
+            }
+
+            if (k == words[index].size()) 
+            {
+                vector<string> temp = grid;
+                for (k = 0; k < words[index].size(); ++k) 
+                {
+                    grid[p][q + k] = words[index][k];
+                }
+                call(index + 1);
+                // roll back if the word is not fitting into the grid.
+                grid = temp;
+            }
+        }
+    }
+}
+
+int main()
+{
+
+    f = true;
+
+    int i, j;
+    for (i = 0; i < 10; ++i) {
+        cin >> grid[i];
+    }
+
+    string tempString, word;
+    cin >> word;
+
+    for (auto x : word) 
+    {
+        if (x == ';') 
+        {
+            words.push_back(tempString);
+            tempString = "";
+        }
+        else
+            tempString += x;
+    }
+    words.push_back(tempString);
+    call(0);
+
+    return 0;
+}
+
+
+
+
+
+// Failed...
+
 #include <vector>
 #include <iostream>
 #include <string>
