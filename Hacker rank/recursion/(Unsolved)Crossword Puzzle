@@ -1,0 +1,145 @@
+https://www.hackerrank.com/challenges/crossword-puzzle/problem
+
+#include <vector>
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+vector<string> split(string str, string token);
+void FindLocation(vector<string> grid, vector<pair<int, int>>& verticalBlink, vector<pair<int, int>>& horizontalBlink);
+
+int main()
+{
+    std::vector<std::string> grid(10);
+    for (int i = 0; i < 10; ++i)
+    {
+        std::cin >> grid[i];
+    }
+
+    std::string words("");
+    std::cin >> words;
+    std::vector<std::string> word = split(words, ";");
+    
+    // Find all blink's (starting point, length) pair
+    vector<pair<int, int>> verticalBlink(10, make_pair(-1,0));
+    vector<pair<int, int>> horizontalBlink(10, make_pair(-1, 0));
+    FindLocation(grid, verticalBlink, horizontalBlink);
+
+    /*
+    Need to fill blinks
+    
+    */
+    
+
+}
+
+vector<string> split(string str, string token) {
+    vector<string>result;
+    while (str.size()) {
+        int index = str.find(token);
+        if (index != string::npos) {
+            result.push_back(str.substr(0, index));
+            str = str.substr(index + token.size());
+            if (str.size() == 0)result.push_back(str);
+        }
+        else {
+            result.push_back(str);
+            str = "";
+        }
+    }
+    return result;
+}
+
+void FindStartingLocation(vector<string> grid, vector<pair<int, int>>& verticalBlink, vector<pair<int, int>>& horizontalBlink)
+{
+    for (int i = 0; i < 10; ++i)
+    {
+        for (int j = 0; j < 10; ++j)
+        {
+            if (grid[i][j] == '-')
+            {
+                if (horizontalBlink[i].first == -1)
+                {
+                    horizontalBlink[i].first = j;
+                    horizontalBlink[i].second++;
+                }
+
+                if (verticalBlink[j].first == -1)
+                {
+                    verticalBlink[j].first = i;
+                    verticalBlink[j].second++;
+                }
+            }
+        }
+    }
+}
+
+void FindLocation(vector<string> grid, vector<pair<int, int>>& verticalBlink, vector<pair<int, int>>& horizontalBlink)
+{
+    FindStartingLocation(grid, verticalBlink, horizontalBlink);
+    for (int i = 0; i < 10; ++i)
+    {
+        for (int j = 0; j < 9; ++j)
+        {
+            if (grid[i][j] == '-')
+            {
+                if (grid[i][j] == grid[i][j + 1])
+                    horizontalBlink[i].second++;
+            }
+        }
+    }
+
+
+    for (int i = 0; i < 10; ++i)
+    {
+        for (int j = 0; j < 9; ++j)
+        {
+            if (grid[j][i] == '-')
+            {
+                if (grid[j][i] == grid[j+1][i])
+                    verticalBlink[i].second++;
+            }
+        }
+    }
+}
+
+
+void FillGrid(vector<string> grid, vector<pair<int, int>>& verticalBlink, vector<pair<int, int>>& horizontalBlink, vector<string> words)
+{
+
+    for (int i = 0; i < 10; ++i)
+    {
+        if (horizontalBlink[i].second <= 1)
+            continue;
+        for (string s : words)
+        {
+            if (s.size() != horizontalBlink[i].second)
+                continue;
+            for (char c : s)
+            {
+                int start(horizontalBlink[i].first);
+                grid[i][start++] = c;
+            }
+
+            for (int j = horizontalBlink[i].first; j <= horizontalBlink[i].first + horizontalBlink[i].second; ++j)
+            {
+                if (verticalBlink[i].second <= 1)
+                    continue;
+                if (verticalBlink[j].first <= i && i <= verticalBlink[j].first + verticalBlink[j].second)
+                {
+                    for(string s : words)
+                    {
+                    }
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 10; ++i)
+    {
+        if (horizontalBlink[i].second > 1)
+            std::cout << "horizontalBlink " << i << " = " << horizontalBlink[i].first << " , " << horizontalBlink[i].second << std::endl;
+    }
+
+}
