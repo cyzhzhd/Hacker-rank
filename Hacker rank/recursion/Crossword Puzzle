@@ -1,116 +1,114 @@
 https://www.hackerrank.com/challenges/crossword-puzzle/problem
 
-// Editorial
-
 #include <vector>
 #include <iostream>
 #include <string>
-using namespace std;
 
-vector<string> grid(10);
-vector<string> words;
-bool f;
+// we can solve it by backtracking all the possible answers.
 
-void call(int index)
-{
-    if (!f) 
-        return;
+std::vector<std::string> grid;
+std::vector<std::string> words;
+bool isCompleted = false;
 
-
-    // print filled grid
-    if (index == words.size()) 
-    {
-        if (f) 
-        {
-            for (auto word : grid) 
-            {
-                cout << word << endl;
-            }
-            f = false;
-        }
-        return;
-    }
-
-    int i, j, p, q, k;
-    for (i = 0; i < 10; ++i) 
-    {
-        for (j = 0; j < 10; ++j) 
-        {
-            p = i, q = j;
-            // Fill vertically
-            for ( k = 0; k < words[index].size() && p + k < 10; ++k) 
-            {
-                if (grid[p + k][q] != '-' && grid[p + k][q] != words[index][k]) 
-                {
-                    break;
-                }
-            }
-
-            if (k == words[index].size()) 
-            {
-                vector<string> temp = grid;
-                for (k = 0; k < words[index].size(); ++k) 
-                {
-                    grid[p + k][q] = words[index][k];
-                }
-                call(index + 1);
-                // roll back if the word is not fitting into the grid.
-                grid = temp;
-            }
-
-            // Fill horizontally
-            for (k = 0; k < words[index].size() && q + k < 10; ++k) 
-            {
-                if (grid[p][q + k] != '-' && grid[p][q + k] != words[index][k]) 
-                {
-                    break;
-                }
-            }
-
-            if (k == words[index].size()) 
-            {
-                vector<string> temp = grid;
-                for (k = 0; k < words[index].size(); ++k) 
-                {
-                    grid[p][q + k] = words[index][k];
-                }
-                call(index + 1);
-                // roll back if the word is not fitting into the grid.
-                grid = temp;
-            }
-        }
-    }
-}
+void Fill(int wordIdx);
 
 int main()
 {
+	// Get grid
+	grid.clear();
+	grid.resize(10);
+	for (auto& s : grid)
+		std::cin >> s;
 
-    f = true;
+	// Get words
+	std::string line;
+	std::cin >> line;
 
-    int i, j;
-    for (i = 0; i < 10; ++i) {
-        cin >> grid[i];
-    }
+	// Split words
+	std::string word;
+	for (auto c : line)
+	{
+		if (c == ';')
+		{
+			words.push_back(word);
+			word = "";
+		}
+		else
+			word.push_back(c);
+	}
+	words.push_back(word);
 
-    string tempString, word;
-    cin >> word;
-
-    for (auto x : word) 
-    {
-        if (x == ';') 
-        {
-            words.push_back(tempString);
-            tempString = "";
-        }
-        else
-            tempString += x;
-    }
-    words.push_back(tempString);
-    call(0);
-
-    return 0;
+	// start from the first word
+	Fill(0);
 }
 
+void Fill(int wordIdx)
+{
+	// if the problem is already solved, simply return
+	if (isCompleted)
+		return;
+
+	// if we place all the word
+	if (wordIdx == words.size())
+	{
+		for (auto s : grid)
+			std::cout << s << std::endl;
+		isCompleted = true;
+		return;
+	}
+
+	for (int i = 0; i < 10; ++i)
+	{
+		for (int j = 0; j < 10; ++j)
+		{
+			int k(0);
+			for (k = 0; i + k < 10 && k < words[wordIdx].size(); ++k)
+			{
+				// if character is '-' or words[k], keep iterating
+				if (grid[i + k][j] != '-' && grid[i+k][j] != words[wordIdx][k])
+					break;
+			}
+
+			if (k == words[wordIdx].size())
+			{
+				auto tempGrid = grid; 
+
+				int c = 0;
+				for (int t = 0; t < k; ++t)
+				{
+					grid[i + t][j] = words[wordIdx][c++];
+				}
+
+				Fill(wordIdx + 1);
+
+				// roll back if the word is not fitting into the grid.
+				grid = tempGrid;
+			}
+
+
+			for (k = 0; j + k < 10 && k < words[wordIdx].size(); ++k)
+			{
+				if (grid[i][j + k] != '-' && grid[i][j + k] != words[wordIdx][k])
+					break;
+			}
+
+			if (k == words[wordIdx].size())
+			{
+				auto tempGrid = grid;
+
+				int c = 0;
+				for (int t = 0; t < k; ++t)
+				{
+					grid[i][j + t] = words[wordIdx][c++];
+				}
+
+				Fill(wordIdx + 1);
+
+				grid = tempGrid;
+			}
+		}
+	}
+}
 
 
 
