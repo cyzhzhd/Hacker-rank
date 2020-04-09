@@ -1,0 +1,32 @@
+https://www.hackerrank.com/challenges/the-power-sum/problem
+
+#include <vector>
+#include <iostream>
+
+int n(0), count(0);
+
+void PowerSum(int target, int num);
+
+int main()
+{
+	int x(0);
+	std::cin >> x >> n;
+	for (int i = 1; pow(i,n) <= x; ++i)
+	{
+		PowerSum(x - pow(i, n), i);
+	}
+
+	std::cout << count << std::endl;
+}
+
+void PowerSum(int target, int num)
+{
+	if (target == 0)
+	{
+		count++;
+		return;
+	}
+
+	for(int i = num + 1; pow(i, n) <= target; ++i)
+		PowerSum(target - pow(i, n), i);
+}
