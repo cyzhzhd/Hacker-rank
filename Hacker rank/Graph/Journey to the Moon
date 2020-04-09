@@ -1,0 +1,78 @@
+https://www.hackerrank.com/challenges/journey-to-the-moon/problem
+
+#include <vector>
+#include <iostream>
+#include <stack>
+
+
+// A key point to solve this problem is finding groups.
+// To find groups, we can implement BFS(or DFS) and disjoint set(Union-Find).
+// I will implement DFS here.
+// After finding the groups, we can calculate possible combination from them.
+
+
+std::vector<std::vector<int>> astronauts;
+std::vector<bool> hasDistinguished;
+std::vector<int> country;
+
+void DFS(int index, int countryIndex);
+
+int main()
+{
+	int n(0), p(0);
+	std::cin >> n >> p;
+	astronauts.resize(n);
+	hasDistinguished.resize(n, false);
+
+	for (int i = 0; i < p; ++i)
+	{
+		int a(0), b(0);
+		std::cin >> a >> b;
+		
+		astronauts[a].push_back(b);
+		astronauts[b].push_back(a);
+	}
+
+
+	int countryIndex(0);
+	for (int i = 0; i < n; ++i)
+	{
+		if (!hasDistinguished[i])
+			DFS(i, countryIndex++);
+	}
+
+	long sum(0);
+	long oldSum(0);
+	for (int i = 0; i < country.size() - 1; ++i)
+	{
+		// a * b + a * c + b * c = a * b + (a + b) * c
+		oldSum += country[i];
+		sum += oldSum * country[i + 1];
+	}
+
+	std::cout << sum << std::endl;
+}
+
+void DFS(int index, int countryIndex)
+{
+	std::stack<int> stack;
+	stack.push(index);
+	hasDistinguished[index] = true;
+	// Accessing to the DFS means an astronaut hasn't belong to any country discovered so far.
+	country.push_back(1);
+
+	while (!stack.empty())
+	{
+		index = stack.top();
+		stack.pop();
+		for (int& i : astronauts[index])
+		{
+			if (!hasDistinguished[i])
+			{
+				stack.push(i);
+				hasDistinguished[i] = true;
+				country[countryIndex]++;
+			}
+		}
+	}
+}
