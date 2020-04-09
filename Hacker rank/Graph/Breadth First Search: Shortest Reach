@@ -1,0 +1,69 @@
+https://www.hackerrank.com/challenges/bfsshortreach/problem
+
+#include <vector>
+#include <iostream>
+#include <queue>
+
+std::vector<std::vector<int>> edges;
+std::vector<int> distance;
+std::vector<bool> isVisted;
+
+
+void FindDistance(int startingNode);
+
+int main()
+{
+	int q(0), n(0), u(0), v(0), s(0);
+	long m(0);
+	std::cin >> q;
+	while (q--)
+	{
+		std::cin >> n >> m;
+
+		edges.clear(); distance.clear(); isVisted.clear();
+		edges.resize(n + 1); distance.resize(n + 1, -1); isVisted.resize(n + 1, false);
+		for (int i = 0; i < m; ++i)
+		{
+			std::cin >> u >> v;
+			edges[u].push_back(v);
+			edges[v].push_back(u);
+		}
+
+		std::cin >> s;
+		FindDistance(s);
+
+		for (int i = 1; i <= n; ++i)
+		{
+			// do not print own distance
+			if (i == s)
+				continue;
+			std::cout << distance[i] << ' ';
+		}
+		std::cout << std::endl;
+	}
+}
+
+// It is a simple implementation of BFS except we check distances from the starting node.
+// we can do this using a distance of the parent node.
+void FindDistance(int startingNode)
+{
+	std::queue<int> queue;
+	queue.push(startingNode);
+	isVisted[startingNode] = true;
+	distance[startingNode] = 0;
+	while (!queue.empty())
+	{
+		int idx = queue.front();
+		queue.pop();
+		for (int i : edges[idx])
+		{
+			if (!isVisted[i])
+			{
+				queue.push(i);
+				isVisted[i] = true;
+				// each child node is 6 units further than parent node.
+				distance[i] = distance[idx] + 6;
+			}
+		}
+	}
+}
