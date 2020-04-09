@@ -1,0 +1,141 @@
+https://www.hackerrank.com/challenges/torque-and-development/problem
+
+// GetCost method will solve most of test cases but it got abort error for some tests. It is implementing BFS so it will visit every node. That is where it has a problem with a time complexity issue.
+// But this problem could be solved more easily and quickly using GetCostSimply method.
+
+
+
+#include <queue>
+#include <vector>
+#include <iostream>
+
+long q(0), n(0), m(0), c_lib(0), c_road(0);
+std::vector<std::vector<int>> cities;
+bool* isVisitedInBFS;
+unsigned long long int cost(0);
+
+int FindBestLocation(int index);
+void GetCost(std::vector<int> bestLocations);
+void GetCostSimply(std::vector<int> bestLocations);
+
+int main()
+{
+    std::cin >> q;
+    while (q--)
+    {
+        cost = 0;
+        std::cin >> n >> m >> c_lib >> c_road;
+        cities.clear();
+        cities.resize(n + 1);
+
+        // set false becasue we haven't visited any nodes.
+        isVisitedInBFS = new bool[n + 1];
+        for (int i = 1; i <= n; ++i)
+        {
+            isVisitedInBFS[i] = false;
+        }
+
+        // get inputs for a graph
+        for (int i = 0; i < m; ++i)
+        {
+            int from(0), to(0);
+            std::cin >> from >> to;
+            cities[from].push_back(to);
+            cities[to].push_back(from);
+        }
+
+        // if the cost of building a library is cheaper, we will just build libraries in each city.
+        if (c_lib <= c_road)
+            std::cout << n * c_lib << std::endl;
+        else
+        {
+            // best location means the city which connects most of the cities.
+            std::vector<int> bestLocations;
+            for (int i = 1; i <= n; ++i)
+            {
+                if (!isVisitedInBFS[i])
+                {
+                    int bestlocation = FindBestLocation(i);
+                    bestLocations.push_back(bestlocation);
+                }
+            }
+
+            GetCostSimply(bestLocations);
+            std::cout << cost << std::endl;
+        }
+        delete[] isVisitedInBFS;
+    }
+}
+
+int FindBestLocation(int index)
+{
+    int max(0), bestlocation(index);
+    std::queue<int> queue;
+
+    queue.push(index);
+    isVisitedInBFS[index] = true;
+
+    while (!queue.empty())
+    {
+        index = queue.front();
+        queue.pop();
+
+        for (int i : cities[index])
+        {
+            if (!isVisitedInBFS[i])
+            {
+                queue.push(i);
+                isVisitedInBFS[i] = true;
+            }
+        }
+
+        if (cities[index].size() > max) 
+        {
+            max = cities[index].size();
+            bestlocation = index;
+        }
+    }
+    return bestlocation;
+}
+
+void GetCost(std::vector<int> bestLocations)
+{
+    bool* isReachable = new bool[n];
+    for (int i = 1; i <= n; ++i)
+    {
+        isReachable[i] = false;
+    }
+
+    for (int i : bestLocations)
+    {
+        cost += c_lib;
+        std::queue<int> queue;
+
+        queue.push(i);
+        isReachable[i] = true;
+
+        while (!queue.empty())
+        {
+            i = queue.front();
+            queue.pop();
+
+            for (int j : cities[i])
+            {
+                // if cities are not connected, build a road and put the city in the connected city list
+                if (!isReachable[j])
+                {
+                    queue.push(j);
+                    isReachable[j] = true;
+                    cost += c_road;
+                }
+            }
+        }
+    }
+}
+
+void GetCostSimply(std::vector<int> bestLocations)
+{
+    // build roads and add the cost of gap between road and library. 
+    cost = n * c_road;
+    cost += (c_lib - c_road) * bestLocations.size();
+}
