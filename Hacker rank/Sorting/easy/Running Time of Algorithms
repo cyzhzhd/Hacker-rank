@@ -1,0 +1,29 @@
+https://www.hackerrank.com/challenges/runningtime/problem?h_r=next-challenge&h_v=zen
+
+
+#include <iostream>
+#include <vector>
+
+int main()
+{
+	int n(0), count(0);
+	std::cin >> n;
+	std::vector<int> arr(n);
+	for (int& i : arr)
+		std::cin >> i;
+
+	for (int i = 1; i < n; ++i)
+	{
+		int j = i - 1;
+		int value = arr[i];
+		while (j >= 0 && value < arr[j])
+		{
+			arr[j + 1] = arr[j];
+			count++;
+			j--;
+		}
+
+		arr[j + 1] = value;
+	}
+	std::cout << count << std::endl;
+}
