@@ -1,0 +1,120 @@
+https://www.hackerrank.com/challenges/knightl-on-chessboard/problem
+
+
+#include <queue>
+#include <iostream>
+#include <vector>
+
+void FindWaysDiagonal(int n, int count, int movePower);
+void FindPossibleWaysBFS(int n, int movePowerR, int movePowerC);
+
+std::vector<std::vector<int>> arr;
+int countContainer(-1);
+
+int main()
+{
+	int n(0);
+	std::cin >> n;
+	arr.resize(n, std::vector<int>(n, -2));
+
+	// loop every grid and find the minimum count to reach the desired position.
+	for (int i = 0; i < n - 1; ++i)
+	{
+		for (int j = 0; j < n - 1; ++j)
+		{
+			if (i == j)
+			{
+				countContainer = -1;
+				FindWaysDiagonal(n, 0, i + 1);
+				arr[i][j] = countContainer;
+			}
+			else
+			{
+				// the result will be symmetry about diagonal
+				if (arr[j][i] != -2)
+				{
+					arr[i][j] = arr[j][i];
+				}
+				else
+				{
+					FindPossibleWaysBFS(n, i + 1, j + 1);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < n - 1; ++i)
+	{
+		for (int j = 0; j < n - 1; ++j)
+		{
+			std::cout << arr[i][j] << ' ';
+		}
+		std::cout << std::endl;
+	}
+}
+
+
+// figure how many steps should the horse move
+void FindWaysDiagonal(int n, int count, int movePower)
+{
+	int pos(0);
+	for (pos = 0; pos < n; pos += movePower)
+	{
+		count++;
+	}
+
+	// because the loop circulate one more time than we want
+	pos -= movePower;
+
+	
+	if (pos == n - 1)
+		// the horse arrives desire position
+		countContainer = count - 1;
+	else
+		countContainer = -1;
+}
+
+
+void FindPossibleWaysBFS(int n, int movePowerR, int movePowerC)
+{
+	// the horse can move 8 different ways. 
+	int rd[8] = { movePowerR, movePowerC, movePowerR, movePowerC, -movePowerC, -movePowerR, -movePowerC, -movePowerR };
+	int cd[8] = { movePowerC, movePowerR, -movePowerC, -movePowerR, movePowerR, movePowerC, -movePowerR, -movePowerC };
+	std::vector<std::vector<bool>> isVisited(n, std::vector<bool>(n, false));
+
+
+	std::queue<std::vector<int>> queue;
+	// Current position of Row and Col, count
+	queue.push(std::vector<int> {0, 0, 0});
+
+	isVisited[0][0] = true;
+	while (!queue.empty())
+	{
+		std::vector<int> curPos = queue.front();
+		queue.pop();
+
+		if (curPos[0] == n - 1 && curPos[1] == n - 1)
+		{
+			arr[movePowerR - 1][movePowerC - 1] = curPos[2];
+			break;
+		}
+
+		for (int i = 0; i < 8; ++i)
+		{
+			int newRow = curPos[0] + rd[i];
+			int newCol = curPos[1] + cd[i];
+			if ((newRow < 0 || newRow > n - 1) || (newCol < 0 || newCol > n - 1) || isVisited[newRow][newCol])
+				continue;
+			else
+			{
+				queue.push(std::vector<int> { newRow, newCol, curPos[2] + 1});
+				isVisited[newRow][newCol] = true;
+			}
+		}
+	}
+
+	// if the horse cannot reach the desired position
+	if (arr[movePowerR - 1][movePowerC - 1] == -2)
+		arr[movePowerR - 1][movePowerC - 1] = -1;
+
+}
