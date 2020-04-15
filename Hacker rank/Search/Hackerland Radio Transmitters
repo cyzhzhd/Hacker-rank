@@ -1,0 +1,49 @@
+https://www.hackerrank.com/challenges/hackerland-radio-transmitters/problem
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+int main()
+{
+	int n(0), k(0);
+	std::cin >> n >> k;
+	std::vector<int> houses(n);
+	for (int& i : houses)
+		std::cin >> i;
+
+	// There could be more than two houses in the same location.
+	std::vector<int>::iterator it;
+	std::sort(houses.begin(), houses.end());
+	it = std::unique(houses.begin(), houses.end());
+	houses.resize(std::distance(houses.begin(), it));
+
+
+	int max = std::pow(10, 5);
+	std::vector<bool> isLocated(max);
+	for (int i : houses)
+		isLocated[i] = true;
+
+	int count(0);
+	for (int i = houses[0]; i <= houses[houses.size()-1]; ++i)
+	{
+		// we don't need to consider a case where there is no house in the land.
+		if (isLocated[i])
+		{
+			for (int j = i + k; j >= i; --j)
+			{
+				if (isLocated[j])
+				{
+					count++;
+					// let's say k = 2 and a map is given below.
+					// 2 4 5 6 7
+					// if we built a transimtter in 4, it can transmit signal on 6. 
+					// 2 + (4-2) + 2 = 6
+					i += (j - i) + k;
+					break;
+				}
+			}
+		}
+	}
+	std::cout << count << std::endl;
+}
+
