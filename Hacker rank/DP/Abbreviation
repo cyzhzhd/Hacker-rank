@@ -1,0 +1,126 @@
+https://www.hackerrank.com/challenges/abbr/problem
+
+#include <vector>
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+int main()
+{
+	int q(0);
+	std::cin >> q;
+	while (q--)
+	{
+		std::string a("");
+		std::string b("");
+		std::cin >> a >> b;
+
+		std::sort(a.begin(), a.end());
+		std::sort(b.begin(), b.end());
+		// for 'if ((int)a[i] > 96)' to work.
+		a += '~';
+
+
+		std::string aUpper("");
+		std::string aLower("");
+		for (auto i = 0; i < a.size(); ++i)
+		{
+			if ((int)a[i] > 96)
+			{
+				aUpper = a.substr(0, i);
+				aLower = a.substr(i, a.size() - i - 1);
+				break;
+			}
+		}
+
+		//std::cout << "aUpper = " << aUpper << std::endl;
+		//std::cout << "aLower = " << aLower << std::endl;
+		//std::cout << "b = " << b << std::endl;
+		
+		
+		if (aUpper == b)
+		{
+			std::cout << 10 - q << ". ---------------------" << std::endl;
+			//std::cout << "A == b" << std::endl;
+			std::cout << "YES" << std::endl;
+			continue;
+		}
+
+		// every character in aUpper should be contained in b
+		bool yes(true);
+		for (auto i = 0; i < aUpper.size(); ++i)
+		{
+			bool find(false);
+			for (auto j = 0; j < b.size(); ++j)
+			{
+				if (aUpper[i] == b[j])
+				{
+					b.erase(j, 1);
+					find = true;
+					break;
+				}
+			}
+			if (!find)
+			{
+				yes = false;
+				break;
+			}
+		}
+
+		if (!yes)
+		{
+			std::cout << 10 - q << ". ---------------------" << std::endl;
+			std::cout << "NO" << std::endl;
+			continue;
+		}
+		
+		/*
+		if (b.size() == 0)
+		{
+			std::cout << 10 - q << ". ---------------------" << std::endl;
+			std::cout << "YES" << std::endl;
+			continue;
+		}*/
+
+
+
+
+
+		std::cout << "b: " << b << std::endl;
+		for (auto& c : aLower)
+			c = toupper(c);
+
+		std::cout << "aUpper: " << aUpper << std::endl;
+		std::cout << "aLower: " << aLower << std::endl;
+
+
+		bool yes2(true);
+		// every character in b should be contained in aLower
+		for (char bc : b)
+		{
+			bool find(false);
+			for (char ac : aLower)
+			{
+				if (bc == ac)
+				{
+					find = true;
+					break;
+				}
+			}
+
+			if (!find)
+			{
+				yes2 = false;
+				break;
+			}
+		}
+
+		std::cout << 10 - q << ". ---------------------" << std::endl;
+		if (yes2)
+			std::cout << "YES" << std::endl;
+		else
+			std::cout << "NO" << std::endl;
+	}
+}
+
+
