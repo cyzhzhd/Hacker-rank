@@ -1,0 +1,61 @@
+https://www.acmicpc.net/problem/1747
+
+// if it is a prime number then check whether it is also a palindrome number.
+
+#include <string>
+#include <iostream>
+
+int main()
+{
+	long n(0);
+	std::cin >> n;
+	n -= 1;
+	while (++n)
+	{
+		// primality test.
+		if (n <= 3)
+		{
+			if (n == 1)
+				continue;
+			else
+			{
+				std::cout << n << std::endl;
+				break;
+			}
+		}
+		else if (n % 2 == 0 || n % 3 == 0)
+			continue;
+
+		bool isPrime = true;
+		int i(5);
+		while (i * i <= n)
+		{
+			if (n % i == 0 || n % (i + 2) == 0)
+			{
+				isPrime = false;
+				break;
+			}
+			i += 6;
+		}
+		
+		// if it is a prime number.
+		if (isPrime)
+		{
+			std::string ori = std::to_string(n);
+			std::string reverse("");
+
+			for (char c : ori)
+			{
+				// insert front
+				reverse.insert(0, 1, c);
+			}
+			
+			if (ori == reverse)
+			{
+				std::cout << ori << std::endl;
+				break;
+			}
+		}
+	}
+}
+
