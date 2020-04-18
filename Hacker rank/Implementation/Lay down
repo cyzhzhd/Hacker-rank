@@ -1,0 +1,60 @@
+https://www.acmicpc.net/problem/1652
+
+#include <vector>
+#include <iostream>
+
+int main()
+{
+	int n(0);
+	std::cin >> n;
+	std::vector<std::vector<char>> room(n, std::vector<char>(n));
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			std::cin >> room[i][j];
+		}
+	}
+
+	// find horizontally
+	int horSpace(0);
+	for (int i = 0; i < n; ++i)
+	{
+		bool hasLaid(false);
+		for (int j = 0; j < n - 1; ++j)
+		{
+			// if there is a barrier in the middle, we consider there is another spot to lay down
+			if (room[i][j] == 'X')
+				hasLaid = false;
+
+			if (hasLaid)
+				continue;
+			if (room[i][j] == '.' && room[i][j + 1] == '.')
+			{
+				horSpace++;
+				hasLaid = true;
+			}
+		}
+	}
+
+	// find vertically
+	int verSpace(0);
+	for (int i = 0; i < n; ++i)
+	{
+		bool hasLaid(false);
+		for (int j = 0; j < n - 1; ++j)
+		{
+			if (room[j][i] == 'X')
+				hasLaid = false;
+
+			if (hasLaid)
+				continue;
+			if (room[j][i] == '.' && room[j + 1][i] == '.')
+			{
+				verSpace++;
+				hasLaid = true;
+			}
+		}
+	}
+	std::cout << horSpace << ' ' << verSpace << std::endl;
+}
