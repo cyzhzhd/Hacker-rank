@@ -1,0 +1,26 @@
+https://www.acmicpc.net/problem/1110
+
+
+#include <iostream>
+
+int main()
+{
+	int x(0);
+	std::cin >> x;
+
+	int count(0);
+	int newNum = x;
+	do
+	{
+		int tens = newNum / 10;
+		int units = newNum % 10;
+
+		int newUnits = (tens + units) % 10;
+		
+		newNum = units * 10 + newUnits;
+
+		count++;
+	} while (x != newNum);
+
+	std::cout << count << std::endl;
+}
