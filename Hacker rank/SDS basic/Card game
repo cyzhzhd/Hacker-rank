@@ -1,0 +1,110 @@
+https://www.acmicpc.net/problem/2621
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+int main()
+{
+	std::vector<char> cardsNum(5);
+	std::vector<int> cardsCol(5);
+
+	for (int i = 0; i < 5; ++i)
+	{
+		char c;	int n(0);
+		std::cin >> c >> n;
+		cardsCol[i] = c;
+		cardsNum[i] = n;
+	}
+	
+	// Cards' colors and numbers have no relations in this problem.
+	std::sort(cardsNum.begin(), cardsNum.end());
+	std::sort(cardsCol.begin(), cardsCol.end());
+
+
+	bool isSuccessiveNum5(true);
+	int counterCol(0), counterSameNum(0);
+	std::vector<int> countCol(5, 1);
+	std::vector<int> countSameNum(5, 1);
+	std::vector<int> cardNum(5, 0);
+	cardNum[0] = cardsNum[0];
+
+	for (int i = 1; i < 5; ++i)
+	{
+		// check how many cards share same color
+		if (cardsCol[i] == cardsCol[i - 1])
+		{
+			countCol[counterCol]++;
+		}
+		else
+		{
+			counterCol++;
+		}
+
+		// check if the cards numbers are succesive
+		if (cardsNum[i] - cardsNum[i - 1] != 1)
+			isSuccessiveNum5 = false;
+
+		// check how many cards share same number
+		if (cardsNum[i] == cardsNum[i - 1])
+		{
+			countSameNum[counterSameNum]++;
+		}
+		else
+		{
+			counterSameNum++;
+			cardNum[counterSameNum] = cardsNum[i];
+		}
+	}
+
+	bool isSameColor5(false), isSameColor4(false), isSameNum4(false), isSameNum3(false), isSameNum2(false), isAnotherSameNum2(false);
+	int sameNum4(0), sameNum3(0), sameNum2(0), anotherSameNum2(0);
+	for (int i = 0; i < 5; ++i)
+	{
+		if (countCol[i] == 5)
+			isSameColor5 = true;
+		if (countCol[i] == 4)
+			isSameColor4 = true;
+
+		if (countSameNum[i] == 4)
+		{
+			isSameNum4 = true;
+			sameNum4 = cardNum[i];
+		}
+		if (countSameNum[i] == 3)
+		{
+			isSameNum3 = true;
+			sameNum3 = cardNum[i];
+		}
+		if (!isSameNum2 && countSameNum[i] == 2)
+		{
+			isSameNum2 = true;
+			sameNum2 = cardNum[i];
+			continue;
+		}
+		if (isSameNum2 && countSameNum[i] == 2)
+		{
+			isAnotherSameNum2 = true;
+			anotherSameNum2 = cardNum[i];
+		}
+	}
+
+	if (isSameColor5 && isSuccessiveNum5)
+		std::cout << 900 + cardsNum[4] << std::endl;
+	else if (isSameNum4)
+		std::cout << 800 + sameNum4 << std::endl;
+	else if (isSameNum3 && isSameNum2)
+		std::cout << 700 + sameNum3 * 10 + sameNum2 << std::endl;
+	else if (isSameColor5)
+		std::cout << 600 + cardsNum[4] << std::endl;
+	else if (isSuccessiveNum5)
+		std::cout << 500 + cardsNum[4] << std::endl;
+	else if (isSameNum3)
+		std::cout << 400 + sameNum3 << std::endl;
+	else if (isSameNum2 && isAnotherSameNum2)
+		std::cout << 300 + anotherSameNum2 * 10 + sameNum2 << std::endl;
+	else if (isSameNum2)
+		std::cout << 200 + sameNum2 << std::endl;
+	else
+		std::cout << 100 + cardsNum[4] << std::endl;
+}
