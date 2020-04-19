@@ -1,0 +1,35 @@
+https://www.acmicpc.net/problem/2816
+
+#include <vector>
+#include <iostream>
+#include <string>
+
+int main()
+{
+	int n(0);
+	std::cin >> n;
+
+	int idx1(0), idx2(0);
+	for (int i = 0; i < n; ++i)
+	{
+		std::string s;
+		std::cin >> s;
+		if (s == "KBS1")
+			idx1 = i;
+		else if (s == "KBS2")
+			idx2 = i;
+	}
+
+
+	// if KBS1 is located lower than KBS2, KBS2's index will be increased by 1.
+	// this is because we are pulling down KBS2 when we are pulling up KBS1
+	int inorder = idx1 > idx2 ? 1 : 0;
+	for (int i = 0; i < idx1; ++i)
+		std::cout << '1';
+	for (int i = 0; i < idx1; ++i)
+		std::cout << '4';
+	for (int i = 0; i < idx2 + inorder; ++i)
+		std::cout << '1';
+	for (int i = 0; i < idx2 + inorder - 1; ++i)
+		std::cout << '4';
+}
