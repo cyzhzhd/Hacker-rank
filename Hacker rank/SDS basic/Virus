@@ -1,0 +1,60 @@
+https://www.acmicpc.net/problem/2606
+
+#include <vector>
+#include <iostream>
+#include <queue>
+
+void BFS(std::vector<std::vector<int>>& vec, std::vector<bool>& isVisited, int idx);
+
+int main()
+{
+	int n(0); long m(0);
+	std::cin >> n >> m;
+	
+	std::vector<std::vector<int>> vec(n + 1, std::vector<int>());
+	for (int i = 0; i < m; ++i)
+	{
+		int from(0), to(0);
+		std::cin >> from >> to;
+
+		vec[from].push_back(to);
+		vec[to].push_back(from);
+	}
+
+	std::vector<bool> isVisited(n + 1, false);
+	int count(0);
+	for (int i = 1; i <= n; ++i)
+	{
+		if (!isVisited[i])
+		{
+			count++;
+			BFS(vec, isVisited, i);
+		}
+	}
+
+	std::cout << count << std::endl;
+}
+
+
+void BFS(std::vector<std::vector<int>>& vec, std::vector<bool>& isVisited, int idx)
+{
+	std::queue<int> queue;
+
+	queue.push(idx);
+	isVisited[idx] = true;
+
+	while (!queue.empty())
+	{
+		idx = queue.front();
+		queue.pop();
+
+		for (int i : vec[idx])
+		{
+			if (!isVisited[i])
+			{
+				queue.push(i);
+				isVisited[i] = true;
+			}
+		}
+	}
+}
