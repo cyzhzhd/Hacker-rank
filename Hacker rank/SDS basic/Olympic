@@ -1,0 +1,47 @@
+https://www.acmicpc.net/problem/8979
+
+#include<vector>
+#include <iostream>
+
+int main()
+{
+	int n(0), k(0);
+	std::cin >> n >> k;
+
+	std::vector<std::vector<long>> medals(n, std::vector<long>(4));
+
+	int idx(-1);
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			std::cin >> medals[i][j];
+		}
+		if (medals[i][0] == k)
+			idx = i;
+	}
+
+	int rank(1);
+	for (int i = 0; i < n; ++i)
+	{
+		if (idx == i)
+			continue;
+
+		// countries which have more gold medals.
+		if (medals[idx][1] < medals[i][1])
+			rank++;
+		else if (medals[idx][1] == medals[i][1])
+		{
+			// countries which have more silver medals.
+			if (medals[idx][2] < medals[i][2])
+				rank++;
+			else if (medals[idx][2] == medals[i][2])
+			{
+				// countries which have more bronze medals.
+				if (medals[idx][3] < medals[i][3])
+					rank++;
+			}
+		}
+	}
+	std::cout << rank << std::endl;
+}
