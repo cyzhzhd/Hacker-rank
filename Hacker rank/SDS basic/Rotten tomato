@@ -1,0 +1,79 @@
+https://www.acmicpc.net/problem/7576
+
+#include <vector>
+#include <iostream>
+#include <queue>
+
+int main()
+{
+	int m(0), n(0);
+	std::cin >> n >> m;
+
+	std::vector<std::vector<int>> box(m, std::vector<int>(n));
+	std::queue<std::pair<int, int>> queue;
+	int segment(0);
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			std::cin >> box[i][j];
+
+			if (box[i][j] == 1)
+			{
+				queue.push(std::make_pair(i, j));
+				segment++;
+			}
+		}
+	}
+
+	// rotten tomato contaminate up, down, left and right tomato
+	int dx[4] = { 1, 0, -1, 0 };
+	int dy[4] = { 0, 1, 0, -1 };
+	int turn(0);
+	while (!queue.empty())
+	{
+		int count(0);
+		// all rotten tomatoes contaminate their neighbor in the same time.
+		for (int i = 0; i < segment; ++i)
+		{
+			int row = queue.front().first;
+			int col = queue.front().second;
+			queue.pop();
+
+			for (int j = 0; j < 4; ++j)
+			{
+				int nextRow = row + dy[j];
+				int nextCol = col + dx[j];
+				if (nextRow >= m || nextRow < 0)
+					continue;
+				if (nextCol >= n || nextCol < 0)
+					continue;
+
+				// empty(-1) room and already rotten tomatoes cannot be contaminated again.
+				if (box[nextRow][nextCol] == 1 || box[nextRow][nextCol] == -1)
+					continue;
+
+				queue.push(std::make_pair(nextRow, nextCol));
+				box[nextRow][nextCol] = 1;
+				count++;
+			}
+		}
+		segment = count;
+		turn++;
+	}
+
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			if (box[i][j] == 0)
+			{
+				std::cout << -1 << std::endl;
+				return 0;
+			}
+		}
+	}
+
+	// no contaminations happen on the last loop.
+	std::cout << turn - 1 << std::endl;
+}
