@@ -1,0 +1,43 @@
+https://www.acmicpc.net/problem/2309
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+void Backtracking(std::vector<int>& dwarfs, std::vector<int> indices, int sum, int index, int includedNum);
+bool isFinished(false);
+
+int main()
+{
+	std::vector<int> dwarfs(9);
+	for (int& i : dwarfs)
+		std::cin >> i;
+
+	std::vector<int> indices(7);
+	Backtracking(dwarfs, indices, 0, 0, 0);
+}
+
+void Backtracking(std::vector<int>& dwarfs, std::vector<int> indices, int sum, int index, int includedNum)
+{
+	if (sum == 100 && includedNum == 7)
+	{
+		std::sort(indices.begin(), indices.end());
+		for (int i : indices)
+		{
+			std::cout << i << std::endl;
+		}
+		isFinished = true;
+		return;
+	}
+
+	if (sum > 100 || index >= 9 || isFinished)
+		return;
+
+
+
+	indices[includedNum] = dwarfs[index];
+	// include
+	Backtracking(dwarfs, indices, sum, index + 1, includedNum);
+	// not include
+	Backtracking(dwarfs, indices, sum + dwarfs[index], index + 1, includedNum + 1);
+}
