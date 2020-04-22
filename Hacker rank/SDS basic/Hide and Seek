@@ -1,0 +1,66 @@
+https://www.acmicpc.net/problem/1697
+
+#include <queue>
+#include <iostream>
+#include <vector>
+
+const int max = 100000;
+
+int main()
+{
+	int n(0), k(0);
+	std::cin >> n >> k;
+
+	std::queue<int> queue;
+	std::vector<bool> isVisited(max + 1, false);
+
+	int count(0), segment(1), answer(0);
+	bool isTraverse;
+	queue.push(n);
+	isVisited[n] = true;
+	while (!queue.empty())
+	{
+		count = 0;
+		isTraverse = false;
+		for (int i = 0; i < segment; ++i)
+		{
+			n = queue.front();
+			queue.pop();
+
+			if (n == k)
+			{
+				std::cout << answer << std::endl;
+				return 0;
+			}
+
+			if (n + 1 <= max && !isVisited[n + 1])
+			{
+				queue.push(n + 1);
+				isVisited[n + 1] = true;
+				isTraverse = true;
+				count++;
+			}
+			if (n - 1 >= 0 && !isVisited[n - 1])
+			{
+				queue.push(n - 1);
+				isVisited[n - 1] = true;
+				isTraverse = true;
+				count++;
+			}
+			if (n * 2 <= max && !isVisited[n * 2])
+			{
+				queue.push(n * 2);
+				isVisited[n * 2] = true;
+				isTraverse = true;
+				count++;
+			}
+		}
+		// count becomes next segment.
+		segment = count;
+		// if there is no traverse during the segment, we shouldn't add one to the answer.
+		if (isTraverse)
+			answer++;
+	}
+	std::cout << answer << std::endl;
+
+}
