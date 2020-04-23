@@ -1,0 +1,84 @@
+https://www.acmicpc.net/problem/2529
+
+#include <algorithm>
+#include <vector>
+#include <iostream>
+#include <string>
+
+bool MeetCriteria(std::vector<int> list, std::string str);
+int main()
+{
+	int n(0);
+	std::cin >> n;
+
+	std::string str("");
+	for (int i = 0; i < n; ++i)
+	{
+		char c;
+		std::cin >> c;
+		str.push_back(c);
+	}
+
+	// a list for the smallest one and a listDesc for the greatest one.
+	std::vector<int> list = { 0, 1,2,3,4,5,6,7,8,9, };
+	std::vector<int> listDesc = list;
+	std::sort(listDesc.begin(), listDesc.end(), std::greater<int>());
+
+	do
+	{
+		if (MeetCriteria(listDesc, str))
+		{
+			std::string collection("");
+			for (int i = 0; i <= str.size(); ++i)
+			{
+				collection.push_back(listDesc[i] + '0');
+			}
+			std::cout << collection << std::endl;
+			break;
+		}
+
+	} while (std::next_permutation(listDesc.begin(), listDesc.end(), std::greater<int>()));
+
+
+	do
+	{
+		if (MeetCriteria(list, str))
+		{
+			std::string collection("");
+			for (int i = 0; i <= str.size(); ++i)
+			{
+				collection.push_back(list[i] + '0');
+			}
+			std::cout << collection << std::endl;
+			break;
+		}
+
+	} while (std::next_permutation(list.begin(), list.end()));
+	
+}
+
+bool MeetCriteria(std::vector<int> list, std::string str)
+{
+	bool hasSatisfied(true);
+	for (int i = 0; i < str.size(); ++i)  
+	{
+		if (str[i] == '>')
+		{
+			if (!(list[i] > list[i + 1]))
+			{
+				hasSatisfied = false;
+				break;
+			}
+		}
+		else if (str[i] == '<')
+		{
+			if (!(list[i] < list[i + 1]))
+			{
+				hasSatisfied = false;
+				break;
+			}
+		}
+	}
+
+	return hasSatisfied;
+}
