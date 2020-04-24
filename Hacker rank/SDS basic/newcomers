@@ -1,0 +1,49 @@
+https://www.acmicpc.net/problem/1946
+
+
+// sort applicants' score in ascending order
+// if a applicant's paper rank is lower than others, his or her screen rank mush be higher than the others.
+// if the applicant's screen rank is heigher than previous heighst rank, he or she is safe.
+
+
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+int main()
+{
+	int t(0);
+	std::cin >> t;
+	while (t--)
+	{
+		int n(0);
+		std::cin >> n;
+		
+		// paper, screen
+		std::vector<std::vector<int>> rank(n, std::vector<int>(2));
+		for (int i = 0; i < n; ++i)
+		{
+			int paper(0), screen(0);
+			std::cin >> paper >> screen;
+			rank[i][0] = paper;
+			rank[i][1] = screen;
+		}
+
+		std::sort(rank.begin(), rank.end());
+
+		int heighstRank(n+1);
+		int passer(0);
+		for (int i = 0; i < n; ++i)
+		{
+			if (rank[i][1] < heighstRank)
+			{
+				heighstRank = rank[i][1];
+				passer++;
+			}
+
+			if (heighstRank == 1)
+				break;
+		}
+		std::cout << passer << std::endl;
+	}
+}
