@@ -1,0 +1,126 @@
+https://www.acmicpc.net/problem/13460
+
+#include<vector>
+#include <iostream>
+#include <queue>
+
+class Point
+{
+public:
+	int xPosR, yPosR, xPosB, yPosB;
+};
+
+Point* point = new Point();
+bool isVisited[12][12][12][12];
+int dx[4] = { 1, 0, -1, 0 };
+int dy[4] = { 0, 1, 0, -1 };
+
+int BFS(std::vector<std::vector<char>>& board);
+
+int main()
+{
+	int n(0), m(0);
+	std::cin >> n >> m;
+
+	std::vector<std::vector<char>> board(n, std::vector<char>(m));
+
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < m; ++j)
+		{
+			std::cin >> board[i][j];
+
+			if (board[i][j] == 'R')
+			{
+				board[i][j] = '.';
+				point->xPosR = i;
+				point->yPosR = j;
+			}
+			else if (board[i][j] == 'B')
+			{
+				board[i][j] = '.';
+				point->xPosB = i;
+				point->yPosB = j;
+			}
+		}
+	}
+	
+	std::cout << BFS(board) << std::endl;
+}
+
+int BFS(std::vector<std::vector<char>>& board)
+{
+	std::queue<Point> queue;
+	queue.push(*point);
+	isVisited[point->xPosB][point->yPosB][point->xPosR][point->yPosR] = true;
+
+	int count(1);
+	while (!queue.empty())
+	{
+		int qlen = queue.size();
+		while (qlen--)
+		{
+			Point newPoint = queue.front();
+			queue.pop();
+			for (int i = 0; i < 4; ++i)
+			{
+				int xPosB = newPoint.xPosB;
+				int yPosB = newPoint.yPosB;
+				int xPosR = newPoint.xPosR;
+				int yPosR = newPoint.yPosR;
+
+				// move the blue ball
+				while (board[xPosB + dy[i]][yPosB + dx[i]] == '.')
+				{
+					xPosB += dy[i];
+					yPosB += dx[i];
+				}
+				if (board[xPosB + dy[i]][yPosB + dx[i]] == 'O')
+					continue;
+
+				// move the red ball
+				while (board[xPosR + dy[i]][yPosR + dx[i]] == '.')
+				{
+					xPosR += dy[i];
+					yPosR += dx[i];
+				}
+				if (board[xPosR + dy[i]][yPosR + dx[i]] == 'O')
+					return count;
+
+				// if they are in the same pos. Deduct 1 from the slower one.
+				if (xPosB == xPosR && yPosB == yPosR)
+				{
+					if (abs(xPosB - newPoint.xPosB) + abs(yPosB - newPoint.yPosB) < abs(xPosR - newPoint.xPosR) + abs(yPosR - newPoint.yPosR))
+					{
+						xPosR -= dy[i];
+						yPosR -= dx[i];
+					}
+					else
+					{
+						xPosB -= dy[i];
+						yPosB -= dx[i];
+					}
+				}
+
+				if (isVisited[xPosB][yPosB][xPosR][yPosR])
+					continue;
+
+				Point updatePoint;
+				updatePoint.xPosB = xPosB;
+				updatePoint.xPosR = xPosR;
+				updatePoint.yPosB = yPosB;
+				updatePoint.yPosR = yPosR;
+
+				queue.push(updatePoint);
+				isVisited[xPosB][yPosB][xPosR][yPosR] = true;
+			}
+		}
+
+		if (count == 10)
+			return -1;
+
+		count++;
+	}
+
+	return -1;
+}
