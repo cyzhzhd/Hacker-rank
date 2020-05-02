@@ -1,0 +1,186 @@
+https://www.acmicpc.net/problem/12100
+
+#include <vector>
+#include <iostream>
+#include <queue>
+
+int BFS(std::vector<std::vector<int>>& initialGrid, int size);
+void MoveDirector(std::vector<std::vector<int>>& grid, int direction, int size); 
+void Move(std::vector<std::vector<int>>& grid, std::vector<std::vector<bool>>& hasModified, int row, int col, int direction, int size);
+bool hasVisited(std::vector<std::vector<std::vector<int>>>& isVisited, std::vector<std::vector<int>>& grid, int size);
+int FindMax(std::vector<std::vector<int>>& grid, int max, int size);
+
+
+int main()
+{
+	int n(0);
+	std::cin >> n;
+	if (1 <= n && n <= 20)
+	{
+		std::vector<std::vector<int>> grid(n, std::vector<int>(n));
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+				std::cin >> grid[i][j];
+			}
+		}
+
+		std::cout << BFS(grid, n) << std::endl;
+	}
+}
+
+
+int BFS(std::vector<std::vector<int>>& initialGrid, int size)
+{
+	std::queue<std::vector<std::vector<int>>> queue;
+	std::vector<std::vector<std::vector<int>>> isVisited;
+
+	queue.push(initialGrid);
+	isVisited.push_back(initialGrid);
+
+	int count(0), max(0);
+	max = FindMax(initialGrid, max, size);
+	while (!queue.empty())
+	{
+		if (count == 5)
+			break;
+
+		int queueSize = queue.size();
+		while (queueSize--)
+		{
+			std::vector<std::vector<int>> originalGrid = queue.front();
+			queue.pop();
+
+			for (int dir = 0; dir < 4; ++dir)
+			{
+				// resetting grid for each direction
+				auto grid = originalGrid;
+				MoveDirector(grid, dir, size);
+
+				// if we had made the same grid before, do not enqueue. 
+				bool isSame = hasVisited(isVisited, grid, size);
+				if (isSame)
+					continue;
+				
+				isVisited.push_back(grid);
+				queue.push(grid);
+
+				max = FindMax(grid, max, size);
+			}
+		}
+		count++;
+	}
+
+	return max;
+}
+
+
+// for four directions
+int dx[4] = { -1, 1, 0, 0 };
+int dy[4] = { 0, 0, -1, 1 };
+
+void MoveDirector(std::vector<std::vector<int>>& grid, int direction, int size)
+{
+	std::vector<std::vector<bool>> hasModified(size, std::vector<bool>(size, false));
+	switch (direction)
+	{
+	case 0: // Move Up
+		for (int i = 0; i < size; ++i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				Move(grid, hasModified, i, j, direction, size);
+			}
+		}
+		break;
+	case 1: // Move Down
+		for (int i = size - 1; i >= 0; --i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				Move(grid, hasModified, i, j, direction, size);
+			}
+		}
+		break;
+	case 2: // Move left
+		for (int i = 0; i < size; ++i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				Move(grid, hasModified, j, i, direction, size);
+			}
+		}
+		break;
+	case 3: // Move right
+		for (int i = size - 1; i >= 0; --i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				Move(grid, hasModified, j, i, direction, size);
+			}
+		}
+		break;
+	}
+}
+
+
+void Move(std::vector<std::vector<int>>& grid, std::vector<std::vector<bool>>& hasModified, int row, int col, int direction, int size)
+{
+	int value = grid[row][col];
+	int newRow = row + dx[direction];
+	int newCol = col + dy[direction];
+	
+	// moving until we find other values or the end of the boundary
+	while ((0 <= newRow && newRow < size) && (0 <= newCol && newCol < size) && grid[newRow][newCol] == 0)
+	{
+		newRow += dx[direction];
+		newCol += dy[direction];
+	}
+
+	// A new position should be within the bound
+	// AND should not be the original position
+	// Also, if the value has been modified before, do not combine two values.
+	if(((0 <= newRow && newRow < size) && (0 <= newCol && newCol < size))  && (newRow != row || newCol != col) && value == grid[newRow][newCol] && !hasModified[newRow][newCol])
+	{
+		grid[newRow][newCol] = value * 2;
+		grid[row][col] = 0;
+		hasModified[newRow][newCol] = true;
+	}
+	else
+	{
+		grid[row][col] = 0;
+		grid[newRow - dx[direction]][newCol - dy[direction]] = value;
+	}
+}
+
+bool hasVisited(std::vector<std::vector<std::vector<int>>>& isVisited, std::vector<std::vector<int>>& grid, int size)
+{
+	for (auto existingGrid : isVisited)
+	{
+		for (int i = 0; i < size; ++i)
+		{
+			for (int j = 0; j < size; ++j)
+			{
+				if (existingGrid[i][j] != grid[i][j])
+					return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+int FindMax(std::vector<std::vector<int>>& grid, int max, int size)
+{
+	for (int i = 0; i < size; ++i)
+	{
+		for (int j = 0; j < size; ++j)
+		{
+			if (grid[i][j] > max)
+				max = grid[i][j];
+		}
+	}
+
+	return max;
+}
