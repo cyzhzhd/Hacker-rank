@@ -1,0 +1,125 @@
+https://www.acmicpc.net/problem/3190
+
+#include <vector>
+#include <iostream>
+
+int ChangeDirection(int direction, int command);
+bool HitItself(std::vector<std::pair<int, int>>& snake);
+
+int main()
+{
+	int n(0), k(0);
+	std::cin >> n >> k;
+
+	// locations of apples <row, col>
+	std::vector<std::pair<int, int>> apples(k);
+	for (int i = 0; i < k; ++i)
+	{
+		int row(0), col(0);
+		std::cin >> row >> col;
+		apples[i] = std::make_pair(row, col);
+	}
+
+	int l(0);
+	std::cin >> l;
+	// <time, direction>
+	std::vector<std::pair<int, int>> commands(l);
+	for (int i = 0; i < l; ++i)
+	{
+		int timeInput(0), commandInt(0);
+		char commandChar(' ');
+		std::cin >> timeInput >> commandChar;
+
+		if (commandChar == 'L')
+			commandInt = -1;
+		else
+			commandInt = 1;
+
+		commands[i] = std::make_pair(timeInput, commandInt);
+	}
+
+
+
+	int dx[4] = { -1, 0, 1, 0 };
+	int dy[4] = { 0, 1, 0, -1 };
+	// 0 = Up, 1 = Right, 2 = Down, 3 = Left
+	int direction = 1;
+
+	// initial position <row, col>
+	std::vector<std::pair<int, int>> snake(1, std::make_pair(1, 1));
+	
+	bool gameOver(false);
+	int time(0);
+	while (!gameOver)
+	{
+		// change the direction on command
+		for (auto command : commands)
+		{
+			if (time == command.first)
+			{
+				direction = ChangeDirection(direction, command.second);
+				break;
+			}
+		}
+
+		// move the snake's head first
+		snake[0].first += dx[direction];
+		snake[0].second += dy[direction];
+
+		// hit the edge or hit itself
+		if (!(0 < snake[0].first && snake[0].first <= n && 0 < snake[0].second && snake[0].second <= n) || HitItself(snake))
+			gameOver = true;
+
+		// move the body
+		for (int i = snake.size() - 1; i > 0; --i)
+		{
+			if (i == 1)
+			{
+				snake[1].first = snake[0].first - dx[direction];
+				snake[1].second = snake[0].second - dy[direction];
+			}
+			else
+			{
+				snake[i].first = snake[i - 1].first;
+				snake[i].second = snake[i - 1].second;
+			}
+		}
+
+		// eat apples
+		for (int i = 0; i < apples.size(); ++i)
+		{
+			if (snake[0].first == apples[i].first && snake[0].second == apples[i].second)
+			{
+				apples.erase(apples.begin() + i);
+				// add tail on the previous position
+				snake.push_back(std::make_pair(snake[snake.size() - 1].first - dx[direction], snake[snake.size() - 1].second - dy[direction]));
+				break;
+			}
+		}
+
+		time++;
+	}
+
+	std::cout << time << std::endl;
+}
+
+
+int ChangeDirection(int direction, int command)
+{
+	int newDirection = (direction + command) % 4;
+
+	if (newDirection == -1)
+		newDirection = 3;
+
+	return newDirection;
+}
+
+bool HitItself(std::vector<std::pair<int,int>>& snake)
+{
+	for (int i = 1; i < snake.size(); ++i)
+	{
+		if (snake[0].first == snake[i].first && snake[0].second == snake[i].second)
+			return true;
+	}
+	return false;
+}
