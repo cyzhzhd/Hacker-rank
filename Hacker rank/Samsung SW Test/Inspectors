@@ -1,0 +1,31 @@
+https://www.acmicpc.net/problem/13458
+
+#include <vector>
+#include <iostream>
+#include <math.h>
+
+int main()
+{
+	double n(0);
+	std::cin >> n;
+	std::vector<double> rooms(n);
+	for (double& i : rooms)
+		std::cin >> i;
+
+	double b(0), c(0);
+	std::cin >> b >> c;
+
+	long long numInspectors(0);
+	for (double i : rooms)
+	{
+		if (i > 0)
+		{
+			i -= b;
+			numInspectors++;
+			if(i > 0)
+				numInspectors += ceil(i / c);
+		}
+	}
+
+	std::cout << numInspectors << std::endl;
+}
