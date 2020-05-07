@@ -1,0 +1,36 @@
+https://programmers.co.kr/learn/courses/30/lessons/64061
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(vector<vector<int>> board, vector<int> moves) {
+    int answer = 0;
+
+    std::vector<int> collections;
+    collections.push_back(1000);
+
+    for(int col : moves)
+    {
+        col--;
+        for(int row = 0; row < board[0].size(); ++row)
+        {
+            if(board[row][col] != 0)
+            {
+                collections.push_back(board[row][col]);
+                board[row][col] = 0;
+                break;
+            }
+        }
+
+        int lastIn = collections.size() - 1;
+        if(collections[lastIn] == collections[lastIn-1])
+        {
+            collections.pop_back();
+            collections.pop_back();
+            answer += 2;
+        }
+    }
+    return answer;
+}
