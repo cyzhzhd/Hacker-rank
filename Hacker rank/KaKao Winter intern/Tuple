@@ -1,0 +1,84 @@
+https://programmers.co.kr/learn/courses/30/lessons/64065
+
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+vector<int> solution(string s);
+
+int main()
+{
+    std::string s;
+    std::cin >> s;
+    std::vector<int> answer = solution(s);
+
+    for (int i : answer)
+        std::cout << i << ' ';
+    std::cout << std::endl;
+}
+
+bool SortOrder(std::vector<int> a, std::vector<int> b)
+{
+    return a.size() < b.size();
+}
+
+
+vector<int> solution(string s) 
+{
+    vector<vector<int>> tuples;
+
+    int count(0);
+    for (int i = 0; i < s.size(); ++i)
+    {
+        // Continue the loop when a character is not an integer.
+        if (!('0' <= s[i] && s[i] <= '9'))
+            continue;
+
+        int number(0);
+        std::vector<int> numbers;
+        while (i < s.size())
+        {
+            // end of an attribute
+            if (s[i] == '}')
+            {
+                numbers.push_back(number);
+                tuples.push_back(numbers);
+                break;
+            }
+            // another integer
+            else if (s[i] == ',')
+            {
+                numbers.push_back(number);
+                number = 0;
+            }
+            // another digit
+            else
+            {
+                number *= 10;
+                number += s[i] - '0';
+            }
+            i++;
+        }
+    }
+
+    // sort tuples by its size
+    std::sort(tuples.begin(), tuples.end(), SortOrder);
+
+    std::vector<int> answers;
+    for(auto tuple : tuples)
+    {
+        for (int n : tuple)
+        {
+            // find numbers that we haven't found.
+            if (std::find(answers.begin(), answers.end(), n) == answers.end()) 
+            {
+                answers.push_back(n);
+            }
+        }
+    }
+
+    return answers;
+}
