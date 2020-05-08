@@ -1,0 +1,65 @@
+https://programmers.co.kr/learn/courses/30/lessons/64064
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <set>
+
+using namespace std;
+
+bool isIncluded[10];
+std::set<std::string> _set;
+
+int solution(vector<string> user_id, vector<string> banned_id)
+{
+    Dfs(user_id, banned_id, 0);
+
+    int answer = _set.size();
+    return answer;
+}
+
+void Dfs(vector<string> user_id, vector<string> banned_id, int ban_index)
+{
+    // if we found a new set
+    if (ban_index == banned_id.size())
+    {
+        std::string combination("");
+        for (int i = 0; i < 10; ++i)
+        {
+            if (isIncluded[i])
+            {
+                combination += i;
+            }
+        }
+
+        _set.insert(combination);
+    }
+
+    // searching through user_id until we find a matching ID
+    for (int i = 0; i < user_id.size(); ++i)
+    {
+        if (isIncluded[i])
+            continue;
+
+        if (user_id[i].size() != banned_id[ban_index].size())
+            continue;
+
+        bool canFit(true);
+        for (int j = 0; j < user_id[i].size(); ++j)
+        {
+            if (banned_id[ban_index][j] != '*' && user_id[i][j] != banned_id[ban_index][j])
+            {
+                canFit = false;
+                break;
+            }
+        }
+
+        if (canFit)
+        {
+            isIncluded[i] = true;
+            Dfs(user_id, banned_id, ban_index + 1);
+            // roll back after checking the route so that we can use the id again for the other cases.
+            isIncluded[i] = false;
+        }
+    }
+}
