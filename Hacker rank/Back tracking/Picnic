@@ -1,0 +1,74 @@
+https://algospot.com/judge/problem/read/PICNIC#
+#include <vector>
+#include <iostream>
+
+/*
+	완전 탐사를 이용해 문제를 풀면 중복이 생긴다. 
+	중복을 없애기 위해 사전 순으로 가장 먼저 나오는 답 하나만을 세는 방법을 사용했다.
+*/
+
+int DFS(std::vector<std::vector<bool>>& areFriends, std::vector<bool> pairdStudent);
+
+int n(0), m(0), count(0);
+
+int main()
+{
+	int t(0);
+	std::cin >> t;
+	while (t--)
+	{
+		std::cin >> n >> m;
+		
+		std::vector<std::vector<bool>> areFriends(10, std::vector<bool>(10, false));
+		for (int i = 0; i < m; ++i)
+		{
+			int from, to;
+			std::cin >> from >> to;
+
+			areFriends[from][to] = true;
+			areFriends[to][from] = true;
+		}
+
+		std::vector<bool> pairdStudent(n, false);
+
+		std::cout << DFS(areFriends, pairdStudent) << std::endl;
+	}
+}
+
+int DFS(std::vector<std::vector<bool>>& areFriends, std::vector<bool> pairedStudent)
+{
+	// 짝이 맺어지지 않은 첫번째 친구의 인덱스를 얻는다. 만약 인덱스가 -1이면 모두 짝이 이뤄진 것이다.
+	int firstFree = -1;
+
+	for (int i = 0; i < n; ++i)
+	{
+		if (!pairedStudent[i])
+		{
+			firstFree = i;
+			break;
+		}
+	}
+
+	if (firstFree == -1)
+	{
+		return 1;
+	}
+
+
+
+	int answer(0);
+	for (int i = firstFree + 1; i < n; ++i)
+	{
+		// 사전순으로 가장 먼저 나오는 친구 조합만 세기 위한 코드.
+		if (pairedStudent[i] || !areFriends[firstFree][i])
+			continue;
+
+		pairedStudent[firstFree] = true;
+		pairedStudent[i] = true;
+		answer += DFS(areFriends, pairedStudent);
+		pairedStudent[i] = false;
+		pairedStudent[firstFree] = false;
+	}
+
+	return answer;
+}
