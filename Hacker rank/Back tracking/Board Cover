@@ -1,0 +1,123 @@
+https://www.algospot.com/judge/problem/read/BOARDCOVER
+
+#include <vector>
+#include <iostream>
+#include <string>
+/*
+    2020. 05. 13
+    DFS를 이용한 완전탐사.
+    (중심, 왼, 위), (중심, 위, 오), (중심, 오, 아), (중심, 아, 왼)의 가능한 모든 방향 시도.
+
+
+
+    문제 1.블록의 모형이 4가지가 아닌 12가지임.
+
+    문제 2. 방문했던 곳 처리 방법. 
+        블록을 놓지 않았을 시, 다음에 그 자리에 놓는 방법을 다시 연산함.
+    
+    문제 1, 2의 해결. 가장 처음 빈 곳에 블록을 놓음으로 해결. 가장 처음 빈 곳에 블록을 무조건 놓을 수 있게 블록 모양 수정.
+*/
+
+int w(0), h(0);
+const int dx1[4] = { 0, 0, 1, 1 };
+const int dy1[4] = { 1, 1, 0, 0 };
+const int dx2[4] = { 1, 1, 1, 1 };
+const int dy2[4] = { 0, 1, 1, -1 };
+
+int DFS(std::vector<std::string>& board, int countEmpty);
+bool IsInside(int dirX1, int dirY1, int dirX2, int dirY2);
+
+int main()
+{
+    int t(0);
+    std::cin >> t;
+    while (t--) 
+    {
+        // 조건을 입력 받음.
+        std::cin >> h >> w;
+
+        std::vector<std::string> board(h);
+        for (auto& line : board)
+            std::cin >> line;
+
+        // 빈칸의 갯수를 셈
+        int countEmpty(0);
+        for (auto& row : board)
+        {
+            for (auto& col : row)
+            {
+                if (col == '.')
+                    countEmpty++;
+            }
+        }
+
+        if (countEmpty % 3 != 0)
+            std::cout << 0 << std::endl;
+        else
+        {
+            std::cout << DFS(board, countEmpty) << std::endl;
+        }
+    }
+}
+
+
+int DFS(std::vector<std::string>& board, int countEmpty)
+{
+    // 중복을 피하기 위해 제일 앞에 빈 칸을 찾는다.
+    int i(-1), j(-1);
+    for (int a = 0; a < h; ++a)
+    {
+        for (int b = 0; b < w; ++b)
+        {
+            if (board[a][b] == '.')
+            {
+                i = a;
+                j = b;
+                break;
+            }
+        }
+        if (i != -1)
+            break;
+    }
+
+    if (i == -1)
+    {
+        return 1;
+    }
+
+    int answer(0);
+    for (int direction = 0; direction < 4; direction++)
+    {
+        int dirX1 = i + dx1[direction];
+        int dirY1 = j + dy1[direction];
+        int dirX2 = i + dx2[direction];
+        int dirY2 = j + dy2[direction];
+
+        if (!IsInside(dirX1, dirY1, dirX2, dirY2))
+            continue;
+
+        if (!(board[dirX1][dirY1] == '.' && board[dirX2][dirY2] == '.'))
+            continue;
+
+        board[i][j] = '#';
+        board[dirX1][dirY1] = '#';
+        board[dirX2][dirY2] = '#';
+        answer += DFS(board, countEmpty - 3);
+        board[i][j] = '.';
+        board[dirX1][dirY1] = '.';
+        board[dirX2][dirY2] = '.';
+    }
+
+    return answer;
+}
+
+bool IsInside(int dirX1, int dirY1, int dirX2, int dirY2)
+{
+    bool condition1 = 0 <= dirX1 && dirX1 < h && 0 <= dirY1 && dirY1 < w;
+    bool condition2 = 0 <= dirX2 && dirX2 < h && 0 <= dirY2 && dirY2 < w;
+
+    if (condition1 && condition2)
+        return true;
+
+    return false;
+}
