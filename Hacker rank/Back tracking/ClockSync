@@ -1,0 +1,101 @@
+https://www.algospot.com/judge/problem/read/CLOCKSYNC
+
+/*
+    주어진 모든 시계를 12시로 맞추기 위해 스위치를 누르는 횟수를 최소화하라.
+
+    완전탐사. 
+    12시가 아닌 시계를 찾아 해당하는 스위치를 누른다.
+
+
+    해답:
+    시계가 아닌 스위치에 초점을 맞춘다. 
+    10개의 스위치를 0~3번 누르는 경우의 수를 모두 구한다.
+
+    스위치를 4번 누르면 기존의 시간으로 돌아오니 스위치를 4번 이상 누르는 경우는 제외해야 한다.
+    따라서 실행 횟수는 4^10번이다.
+*/
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+void AdjustClock(std::vector<int>& clocks, int switchNum);
+int ClockSync(const std::vector<int>& clocks);
+void DFS(std::vector<int>& clocks, int switchIndex, int count);
+
+int minTry(100000);
+
+std::vector<std::vector<int>> switches{
+    {0, 1, 2},
+    {3, 7, 9, 11},
+    {4, 10, 14, 15},
+    {0, 4, 5, 6, 7},
+    {6, 7, 8, 10, 12},
+    {0, 2, 14, 15},
+    {3, 14, 15},
+    {4, 5, 7, 14, 15},
+    {1, 2, 3, 4, 5},
+    {3, 4, 5, 9, 13}
+};
+
+int main()
+{
+    int t(0);
+    std::cin >> t;
+    while (t--)
+    {
+        // 입력
+        std::vector<int> clocks(16);
+        for (int& i : clocks)
+            std::cin >> i;
+
+        minTry = 100000;
+
+        DFS(clocks, 0, 0);
+
+        if (minTry == 100000)
+            std::cout << -1 << std::endl;
+        else
+            std::cout << minTry << std::endl;
+    }
+}
+
+void DFS(std::vector<int>& clocks, int switchIndex, int count)
+{
+    if (ClockSync(clocks))
+    {
+        minTry = minTry < count ? minTry : count;
+        return;
+    }
+
+    if (switchIndex == 10)
+        return;
+
+
+    for (int j = 0; j < 4; ++j)
+    {
+        // 스위치를 누른 횟수를 센다.
+        DFS(clocks, switchIndex + 1, count + j);
+        AdjustClock(clocks, switchIndex);
+    }
+}
+
+void AdjustClock(std::vector<int>& clocks, int switchNum)
+{
+    for (int i : switches[switchNum])
+    {
+        clocks[i] += 3;
+        if (clocks[i] == 15)
+            clocks[i] = 3;
+    }
+}
+
+int ClockSync(const std::vector<int>& clocks)
+{
+    for (int i = 0; i < 16; ++i)
+    {
+        if (clocks[i] != 12)
+            return false;
+    }
+
+    return true;
+}
